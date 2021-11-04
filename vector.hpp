@@ -52,7 +52,7 @@ namespace ft {
             size_type       capacity() const;
             bool            empty() const;
             void            reserve(size_type n);
-            void            resize(size_type sz, const value_type val = value_type()); // 구현 필요
+            void            resize(size_type sz, value_type val = value_type());
 
             // Methods (access)
             reference       at(size_type n);
@@ -217,27 +217,17 @@ namespace ft {
     }
 
     template <class T, class Allocator>
-    void vector<T, Allocator>::resize(size_type sz, const value_type val = value_type()) {
+    void vector<T, Allocator>::resize(size_type sz, value_type val) {
         if (_size < sz) {
-            iterator __r;
             size_type append_size = sz - _size;
-            if (append_size <= _capacity && _size <= _capacity - append_size)
-            {
-                __r = end();
-                _size += append_size;
+            if (sz > _capacity) {
+                reserve(_recommend_size(_size + append_size));
             }
-            else
-            {
-                vector __v(__alloc());
-                __v.reserve(__recommend(_size + append_size));
-                __v._size = _size + append_size;
-                __r = _VSTD::copy(cbegin(), cend(), __v.begin());
-                swap(__v);
+            for (size_type i = _size; i < sz; i++) {
+                _data[i] = val;
             }
-            _VSTD::fill_n(__r, append_size, val);
-        } else {
-            _size = sz;
         }
+        _size = sz;
     }
 
     // Methods (access)
