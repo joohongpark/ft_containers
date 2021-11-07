@@ -63,15 +63,14 @@ namespace ft {
             const_reference back() const;
             void            push_back(const value_type& x);
             void            pop_back();
-            void            swap(vector& x); // 구현 필요
-            void            clear(); // 구현 필요
+            void            swap(vector& x);
+            void            clear();
 
             // Methods (other)
-            allocator_type  get_allocator() const; // 구현 필요
-
             template <class InputIterator>
-            void            assign(InputIterator first, InputIterator last); // 구현 필요
-            void            assign(size_type n, const value_type& u); // 구현 필요
+            void            assign(InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last);
+            void            assign(size_type n, const value_type& u);
+            allocator_type  get_allocator() const;
 
             // Methods (Iterater)
             iterator                begin();
@@ -87,10 +86,10 @@ namespace ft {
             iterator                insert(const_iterator position, const value_type& x);
             iterator                insert(const_iterator position, size_type n, const value_type& x);
             template <class InputIterator>
-            iterator                insert(const_iterator position, InputIterator first, InputIterator last); // 구현 필요
+            iterator                insert(const_iterator position, InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last);
 
-            // Methods (Private)
         private:
+            // Methods (Private)
             size_type _recommend_size(size_type new_size) const;
     };
     template <class T, class Allocator>
@@ -131,14 +130,19 @@ namespace ft {
     template <class InputIterator>
     // TODO: 이터레이터 상태에 따라 검증 해야 할 듯
     vector<T, Allocator>::vector(InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last) {
-        difference_type len = last - first;
-        _size = len;
-        _capacity = len;
-        _data = _alloc.allocate(_size);
-        for (size_type i = 0; i < _size; i++) {
-            _data[i] = *first;
-            first++;
+        _size = 0;
+        _capacity = 0;
+        _data = NULL;
+        for (; first != last; ++first) {
+            push_back(*first);
         }
+        pointer _new_data = _alloc.allocate(_size);
+        for (size_type i = 0; i < _size; i++) {
+            _new_data[i] = _data[i];
+        }
+        _alloc.deallocate(_data, _capacity);
+        _data = _new_data;
+        _capacity = _size;
     }
 
     template <class T, class Allocator>
@@ -287,6 +291,48 @@ namespace ft {
         }
     }
 
+    template <class T, class Allocator>
+    void vector<T, Allocator>::swap(vector& x) {
+        pointer _data_tmp = x._data;
+        size_type _size_tmp = x._size;
+        size_type _capacity_tmp = x._capacity;
+        allocator_type _alloc_tmp = x._alloc;
+        x.data = this->_data;
+        x._size = this->_size;
+        x._capacity = this->_capacity;
+        x._alloc = this->_alloc;
+        this->_data = _data_tmp;
+        this->_size = _size_tmp;
+        this->_capacity = _capacity_tmp;
+        this->_alloc = _alloc_tmp;
+    }
+
+    template <class T, class Allocator>
+    void vector<T, Allocator>::clear() {
+        this->_size = 0;
+    }
+
+    // Methods (other)
+    template <class T, class Allocator>
+    void vector<T, Allocator>::assign(size_type n, const value_type& u) {
+        clear();
+        resize(n, u);
+    }
+
+    template <class T, class Allocator>
+    template <class InputIterator>
+    void vector<T, Allocator>::assign(InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last) {
+        clear();
+        for (; first != last; ++first) {
+            push_back(*first);
+        }
+    }
+
+    template <class T, class Allocator>
+    typename vector<T, Allocator>::allocator_type vector<T, Allocator>::get_allocator() const {
+        return (_alloc);
+    }
+
     // Methods (Iterater)
     template <class T, class Allocator>
     typename vector<T, Allocator>::iterator vector<T, Allocator>::begin() {
@@ -381,6 +427,25 @@ namespace ft {
             _data[start + i] = x;
         }
         _size += n;
+        return (iterator(&_data[start]));
+    }
+
+    template <class T, class Allocator>
+    template <class InputIterator>
+    typename vector<T, Allocator>::iterator vector<T, Allocator>::insert(const_iterator position, InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last) {
+        vector new_data(first, last);
+        size_type new_data_len = new_data.size();
+        if ((_size + new_data_len) > _capacity) {
+            reserve(_recommend_size(_size + new_data_len));
+        }
+        difference_type start = position - begin();
+        for (difference_type i = _size; i > start; i--) {
+            _data[i + new_data_len - 1] = _data[i - 1];
+        }
+        for (size_type i = 0; i < new_data_len; i++) {
+            _data[start + i] = new_data[i];
+        }
+        _size += new_data_len;
         return (iterator(&_data[start]));
     }
 
