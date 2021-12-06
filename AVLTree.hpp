@@ -28,19 +28,23 @@ class AVLTree {
         typedef Tp                                                          value_type;
         typedef Compare                                                     value_compare;
     private:
-        node_allocator_type                                                 _alloc;
+        node_allocator_type                                                 alloc;
+        value_compare                                                       comp;
         node_type*                                                          root;
     public:
         AVLTree();
-        void insert(Tp val);
-        Tp getmin(Node<Tp>* pointer = NULL);
-        Tp getmax(Node<Tp>* pointer = NULL);
-        void delval(Tp val);
-        long getbf(Node<Tp>* node);
-        int nodetype(Node<Tp>* node, Node<Tp>* rnode, Node<Tp>* rrnode);
-        void rewind(Node<Tp>* node);
-        void leftrotate(Node<Tp>* node);
-        void rightrotate(Node<Tp>* node);
+        void        insert(Tp val);
+        void        delval(Tp val);
+        Tp*         getmin(Node<Tp>* pointer = NULL); // NOTE: 없으면 NULL
+        Tp*         getmax(Node<Tp>* pointer = NULL); // NOTE: 없으면 NULL
+        Tp*         find(Tp& val); // NOTE: 없으면 NULL
+    private:
+        long        getbf(Node<Tp>* node);
+        int         nodetype(Node<Tp>* node, Node<Tp>* rnode, Node<Tp>* rrnode);
+        void        rewind(Node<Tp>* node);
+        void        leftrotate(Node<Tp>* node);
+        void        rightrotate(Node<Tp>* node);
+    public:
         void __debug(long depth = 0, Node<Tp>* pointer = NULL) {
             if (pointer == NULL) {
                 pointer = this->root;
@@ -51,7 +55,7 @@ class AVLTree {
             for (long i = 0; i < depth; i++) {
                 std::cout << " ";
             }
-            std::cout << pointer->data << std::endl;
+            std::cout << pointer->data.first << std::endl;
             if (pointer->leftleaf != NULL) {
                 __debug(depth + 1, pointer->leftleaf);
             }
@@ -66,37 +70,37 @@ void AVLTree<Tp, Compare, Allocator>::insert(Tp val) {
     Node<Tp>* pointer = this->root;
     while (true) {
         if (pointer == NULL) {
-            this->root = _alloc.allocate(1);
+            this->root = alloc.allocate(1);
             this->root->init(val, NULL);
             rewind(pointer);
             break ;
-        } else if (pointer->data == val) { // NOTE: Compare 사용해서 비교 해야 함
-            // NOTE: 별도로 처리가 필요한지 확인 필요
-        } else if (pointer->data > val) { // NOTE: Compare 사용해서 비교 해야 함
+        } else if (comp(val, pointer->data)) {
             if (pointer->leftleaf == NULL) {
-                pointer->leftleaf = _alloc.allocate(1);
+                pointer->leftleaf = alloc.allocate(1);
                 pointer->leftleaf->init(val, pointer);
                 rewind(pointer->leftleaf);
                 break ;
             } else {
                 pointer = pointer->leftleaf;
             }
-        } else {
+        } else if (comp(pointer->data, val)) {
             if (pointer->rightleaf == NULL) {
-                pointer->rightleaf = _alloc.allocate(1);
+                pointer->rightleaf = alloc.allocate(1);
                 pointer->rightleaf->init(val, pointer);
                 rewind(pointer->rightleaf);
                 break ;
             } else {
                 pointer = pointer->rightleaf;
             }
+        } else {
+            // FIXME: 처리 여부 확인
         }
     }
 }
 
 template <class Tp, class Compare, class Allocator>
-Tp AVLTree<Tp, Compare, Allocator>::getmin(Node<Tp>* pointer) {
-    // NOTE: 원소가 없을때에는?
+Tp* AVLTree<Tp, Compare, Allocator>::getmin(Node<Tp>* pointer) {
+    Tp* rtn = NULL;
     if (pointer == NULL) {
         pointer = this->root;
     }
@@ -104,15 +108,16 @@ Tp AVLTree<Tp, Compare, Allocator>::getmin(Node<Tp>* pointer) {
         if (pointer->leftleaf != NULL) {
             pointer = pointer->leftleaf;
         } else {
-            return pointer->data;
+            rtn = &(pointer->data);
+            break ;
         }
     }
-    return Tp();
+    return (rtn);
 }
 
 template <class Tp, class Compare, class Allocator>
-Tp AVLTree<Tp, Compare, Allocator>::getmax(Node<Tp>* pointer) {
-    // NOTE: 원소가 없을때에는?
+Tp* AVLTree<Tp, Compare, Allocator>::getmax(Node<Tp>* pointer) {
+    Tp* rtn = NULL;
     if (pointer == NULL) {
         pointer = this->root;
     }
@@ -120,28 +125,60 @@ Tp AVLTree<Tp, Compare, Allocator>::getmax(Node<Tp>* pointer) {
         if (pointer->rightleaf != NULL) {
             pointer = pointer->rightleaf;
         } else {
-            return pointer->data;
+            rtn = &(pointer->data);
+            break ;
         }
     }
-    return Tp();
+    return (rtn);
+}
+
+template <class Tp, class Compare, class Allocator>
+Tp* AVLTree<Tp, Compare, Allocator>::find(Tp& val) {
+    Tp* rtn = NULL;
+    Node<Tp>* pointer = this->root;
+    while (true) {
+        if (pointer == NULL) {
+            break ;
+        } else if (comp(val, pointer->data)) {
+            if (pointer->leftleaf == NULL) {
+                break ;
+            } else {
+                pointer = pointer->leftleaf;
+            }
+        } else if (comp(pointer->data, val)) {
+            if (pointer->rightleaf == NULL) {
+                break ;
+            } else {
+                pointer = pointer->rightleaf;
+            }
+        } else {
+            rtn = &(pointer->data);
+            break ;
+        }
+    }
+    return (rtn);
 }
 
 template <class Tp, class Compare, class Allocator>
 void AVLTree<Tp, Compare, Allocator>::delval(Tp val) {
     Node<Tp>* pointer = this->root;
     while (pointer != NULL) {
-        if (pointer->data == val) { // NOTE: Compare 사용해서 비교 해야 함
+        if (comp(pointer->data, val)) {
+            pointer = pointer->rightleaf;
+        } else if (comp(val, pointer->data)) {
+            pointer = pointer->leftleaf;
+        } else {
             if (pointer->leftleaf == NULL && pointer->rightleaf == NULL) {
                 if (pointer->parent != NULL) {
                     if (pointer->parent->leftleaf == pointer) {
                         pointer->parent->leftleaf = NULL;
-                        _alloc.deallocate(pointer, 1);
+                        alloc.deallocate(pointer, 1);
                     } else {
                         pointer->parent->rightleaf = NULL;
-                        _alloc.deallocate(pointer, 1);
+                        alloc.deallocate(pointer, 1);
                     }
                 } else {
-                    _alloc.deallocate(this->root, 1);
+                    alloc.deallocate(this->root, 1);
                     this->root = NULL;
                 }
                 break ;
@@ -155,8 +192,7 @@ void AVLTree<Tp, Compare, Allocator>::delval(Tp val) {
                     }
                 } else {
                     this->root = pointer->rightleaf;
-                    //delete pointer; // NOTE: delete 대신 Allocator 써야 함
-                    _alloc.deallocate(pointer, 1);
+                    alloc.deallocate(pointer, 1);
                 }
                 break ;
             } else if (pointer->leftleaf != NULL && pointer->rightleaf == NULL) {
@@ -169,20 +205,13 @@ void AVLTree<Tp, Compare, Allocator>::delval(Tp val) {
                     }
                 } else {
                     this->root = pointer->leftleaf;
-                    //delete pointer; // NOTE: delete 대신 Allocator 써야 함
-                    _alloc.deallocate(pointer, 1);
+                    alloc.deallocate(pointer, 1);
                 }
                 break ;
             } else {
-                val = getmin(pointer->rightleaf);
+                val = *(getmin(pointer->rightleaf));
                 pointer->data = val;
                 pointer = pointer->rightleaf;
-            }
-        } else {
-            if (pointer->data < val) { // NOTE: Compare 사용해서 비교 해야 함
-                pointer = pointer->rightleaf;
-            } else {
-                pointer = pointer->leftleaf;
             }
         }
     }
