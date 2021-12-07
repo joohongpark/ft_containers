@@ -33,7 +33,7 @@ class AVLTree {
         node_type*                                                                  root;
     public:
         AVLTree();
-        void        insert(Tp val);
+        Tp*         insert(Tp val);
         void        delval(Tp val);
         Tp*         getmin(node_type* pointer = NULL); // NOTE: 없으면 NULL
         Tp*         getmax(node_type* pointer = NULL); // NOTE: 없으면 NULL
@@ -66,19 +66,22 @@ AVLTree<Tp, Compare, Allocator>::AVLTree() : root(NULL) {}
 
 
 template <class Tp, class Compare, class Allocator>
-void AVLTree<Tp, Compare, Allocator>::insert(Tp val) {
+Tp* AVLTree<Tp, Compare, Allocator>::insert(Tp val) {
     node_type* pointer = this->root;
+    Tp* rtn = NULL;
     while (true) {
         if (pointer == NULL) {
             this->root = alloc.allocate(1);
             this->root->init(val, NULL);
             rewind(pointer);
+            rtn = &(this->root->data);
             break ;
         } else if (comp(val, pointer->data)) {
             if (pointer->leftleaf == NULL) {
                 pointer->leftleaf = alloc.allocate(1);
                 pointer->leftleaf->init(val, pointer);
                 rewind(pointer->leftleaf);
+                rtn = &(pointer->leftleaf->data);
                 break ;
             } else {
                 pointer = pointer->leftleaf;
@@ -88,14 +91,16 @@ void AVLTree<Tp, Compare, Allocator>::insert(Tp val) {
                 pointer->rightleaf = alloc.allocate(1);
                 pointer->rightleaf->init(val, pointer);
                 rewind(pointer->rightleaf);
+                rtn = &(pointer->rightleaf->data);
                 break ;
             } else {
                 pointer = pointer->rightleaf;
             }
         } else {
-            // FIXME: 처리 여부 확인
+            break ;
         }
     }
+    return (rtn);
 }
 
 template <class Tp, class Compare, class Allocator>

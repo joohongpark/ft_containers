@@ -42,7 +42,11 @@ int main() {
         Type p;
         p.first = i;
         p.second = "문자열";
-        t.insert(p);
+        Type *f = t.insert(p);
+        if (f->first != i) {
+            std::cout << "ERROR!" << std::endl;
+            return (-1);
+        }
     }
     Type* min = t.getmin();
     std::cout << "min : " << min->first << " (" << min->second << ")" << std::endl;
