@@ -40,7 +40,7 @@ class AVLTree {
         Tp*         find(Tp& val); // NOTE: 없으면 NULL
     private:
         long        getbf(Node<Tp>* node);
-        int         nodetype(Node<Tp>* node, Node<Tp>* rnode, Node<Tp>* rrnode);
+        int         nodetype(Node<Tp>* parent, Node<Tp>* node, Node<Tp>* child);
         void        rewind(Node<Tp>* node);
         void        leftrotate(Node<Tp>* node);
         void        rightrotate(Node<Tp>* node);
@@ -177,6 +177,7 @@ void AVLTree<Tp, Compare, Allocator>::delval(Tp val) {
                         pointer->parent->rightleaf = NULL;
                         alloc.deallocate(pointer, 1);
                     }
+                    rewind(pointer->parent);
                 } else {
                     alloc.deallocate(this->root, 1);
                     this->root = NULL;
@@ -190,6 +191,7 @@ void AVLTree<Tp, Compare, Allocator>::delval(Tp val) {
                     } else {
                         pointer->parent->rightleaf = pointer->rightleaf;
                     }
+                    rewind(pointer->rightleaf);
                 } else {
                     this->root = pointer->rightleaf;
                     alloc.deallocate(pointer, 1);
@@ -203,6 +205,7 @@ void AVLTree<Tp, Compare, Allocator>::delval(Tp val) {
                     } else {
                         pointer->parent->rightleaf = pointer->leftleaf;
                     }
+                    rewind(pointer->leftleaf);
                 } else {
                     this->root = pointer->leftleaf;
                     alloc.deallocate(pointer, 1);
@@ -222,26 +225,26 @@ long AVLTree<Tp, Compare, Allocator>::getbf(Node<Tp>* node) {
     long leftheight = 0;
     long rightheight = 0;
     if (node->leftleaf != NULL) {
-        leftheight = node->leftleaf->height;
+        leftheight = node->leftleaf->height + 1;
     }
     if (node->rightleaf != NULL) {
-        rightheight = node->rightleaf->height;
+        rightheight = node->rightleaf->height + 1;
     }
     if (leftheight > rightheight) {
-        node->height = leftheight + 1;
+        node->height = leftheight;
     } else {
-        node->height = rightheight + 1;
+        node->height = rightheight;
     }
     return (leftheight - rightheight);
 }
 
 template <class Tp, class Compare, class Allocator>
-int AVLTree<Tp, Compare, Allocator>::nodetype(Node<Tp>* node, Node<Tp>* rnode, Node<Tp>* rrnode) {
+int AVLTree<Tp, Compare, Allocator>::nodetype(Node<Tp>* parent, Node<Tp>* node, Node<Tp>* child) {
     int rtn = 0;
-    if (node->rightleaf == rnode) {
+    if (parent->rightleaf == node) {
         rtn = 2;
     }
-    if (rnode->rightleaf == rrnode) {
+    if (node->rightleaf == child) {
         rtn += 1;
     }
     return (rtn);
@@ -249,48 +252,69 @@ int AVLTree<Tp, Compare, Allocator>::nodetype(Node<Tp>* node, Node<Tp>* rnode, N
 
 template <class Tp, class Compare, class Allocator>
 void AVLTree<Tp, Compare, Allocator>::rewind(Node<Tp>* node) {
-    Node<Tp>* rnode = NULL;
-    Node<Tp>* rrnode = NULL;
-    long cnt = 0;
+    Node<Tp>* child = NULL;
     while (node != NULL) {
-        cnt++;
+        Node<Tp>* parent = node->parent;
         long bf = getbf(node);
-        if (bf > 1 || bf < -1) {
-            int nt = nodetype(node, rnode, rrnode);
-            if (nt == 0) {
-                rightrotate(node);
-                getbf(node);
-                getbf(rnode);
-                node = rnode;
-            } else if (nt == 1) {
-                leftrotate(rnode);
-                rightrotate(node);
-                getbf(node);
-                getbf(rnode);
-                getbf(rrnode);
-                node = rrnode;
-            } else if (nt == 2) {
-                rightrotate(rnode);
-                leftrotate(node);
-                getbf(node);
-                getbf(rnode);
-                getbf(rrnode);
-                node = rrnode;
+        if (parent == NULL || bf > 1 || bf < -1) {
+            if (bf > 1) {
+                node = node->leftleaf;
+            } else if (bf < -1) {
+                node = node->rightleaf;
             } else {
-                leftrotate(node);
-                getbf(node);
-                getbf(rnode);
-                node = rnode;
+                break ;
             }
-            rnode = NULL;
-            rrnode = NULL;
         } else {
-            rrnode = rnode;
-            rnode = node;
-            node = node->parent;
+            bf = getbf(parent);
+            if (child == NULL) {
+                if (node->rightleaf != NULL) {
+                    child = node->rightleaf;
+                } else {
+                    child = node->leftleaf;
+                }
+            }
+            if (bf > 1 || bf < -1) {
+                if (parent->leftleaf == node && bf > 1 || parent->rightleaf == node && bf < -1) {
+                    int nt = nodetype(parent, node, child);
+                    if (nt == 0) {
+                        rightrotate(parent);
+                        getbf(parent);
+                        getbf(node);
+                        node = parent;
+                    } else if (nt == 1) {
+                        leftrotate(node);
+                        rightrotate(parent);
+                        getbf(parent);
+                        getbf(node);
+                        getbf(child);
+                        node = child;
+                    } else if (nt == 2) {
+                        rightrotate(node);
+                        leftrotate(parent);
+                        getbf(parent);
+                        getbf(node);
+                        getbf(child);
+                        node = child;
+                    } else {
+                        leftrotate(parent);
+                        getbf(parent);
+                        getbf(node);
+                        node = parent;
+                    }
+                } else {
+                    if (parent->leftleaf == node) {
+                        node = parent->rightleaf;
+                    } else {
+                        node = parent->leftleaf;
+                    }
+                    child = NULL;
+                }
+            } else {
+                child = node;
+                node = node->parent;
+            }
         }
     }
-    
 }
 
 template <class Tp, class Compare, class Allocator>

@@ -38,7 +38,7 @@ int main() {
     typedef pair_compare<Type, std::less<int> >                 Comp;
     
     AVLTree<Type, Comp, std::allocator<double> > t;
-    for (int i = 0; i < 29; i++) {
+    for (int i = 0; i < 1000; i++) {
         Type p;
         p.first = i;
         p.second = "문자열";
@@ -52,10 +52,9 @@ int main() {
     target.first = 10;
     Type *f = t.find(target);
     std::cout << "find : " << f->first << " (" << f->second << ")" << std::endl;
-    for (int i = 0; i < 14; i++) {
+    for (int i = 0; i < 998; i++) {
         Type p;
         p.first = i;
-        p.second = "문자열";
         t.delval(p);
     }
     t.__debug();
