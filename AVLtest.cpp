@@ -48,19 +48,20 @@ int main() {
             return (-1);
         }
     }
-    Type* min = t.getmin();
-    std::cout << "min : " << min->first << " (" << min->second << ")" << std::endl;
-    Type* max = t.getmax();
-    std::cout << "max : " << max->first << " (" << min->second << ")" << std::endl;
+    AVLTree<Type, Comp>::node_type* min = t.getmin();
+    std::cout << "min : " << min->data.first << " (" << min->data.second << ")" << std::endl;
+    AVLTree<Type, Comp>::node_type* max = t.getmax();
+    std::cout << "max : " << max->data.first << " (" << max->data.second << ")" << std::endl;
     Type target;
     target.first = 10;
     Type *f = t.find(target);
+    AVLTree<Type, Comp> cp(t);
     std::cout << "find : " << f->first << " (" << f->second << ")" << std::endl;
     for (int i = 0; i < 998; i++) {
         Type p;
         p.first = i;
-        t.delval(p);
+        cp.delval(p);
     }
-    t.__debug();
+    cp.__debug();
     return (0);
 }

@@ -31,11 +31,15 @@ class AVLTree {
         node_type*                                                                  root;
     public:
         AVLTree();
+        AVLTree(const AVLTree& avltree);
         ~AVLTree();
+        AVLTree&    operator=(const AVLTree& avltree);
         Tp*         insert(Tp& val);
         void        delval(Tp& val);
-        Tp*         getmin(node_type* pointer = NULL); // NOTE: 없으면 NULL
-        Tp*         getmax(node_type* pointer = NULL); // NOTE: 없으면 NULL
+        node_type*  getmin(node_type* pointer = NULL); // NOTE: 없으면 NULL
+        node_type*  getmax(node_type* pointer = NULL); // NOTE: 없으면 NULL
+        node_type*  getprev(node_type* pointer); // NOTE: 없으면 NULL
+        node_type*  getnext(node_type* pointer); // NOTE: 없으면 NULL
         Tp*         find(Tp& val); // NOTE: 없으면 NULL
     private:
         long        getbf(node_type* node);
@@ -65,6 +69,13 @@ template <class Tp, class Compare, class Allocator>
 AVLTree<Tp, Compare, Allocator>::AVLTree() : alloc(), comp(), root(NULL) {}
 
 template <class Tp, class Compare, class Allocator>
+AVLTree<Tp, Compare, Allocator>::AVLTree(const AVLTree& avltree) : alloc(avltree.alloc), comp(avltree.comp), root(NULL) {
+    if (this != &avltree) {
+        *this = avltree;
+    }
+}
+
+template <class Tp, class Compare, class Allocator>
 AVLTree<Tp, Compare, Allocator>::~AVLTree() {
     node_type* pointer = this->root;
     while (pointer != NULL) {
@@ -82,12 +93,23 @@ AVLTree<Tp, Compare, Allocator>::~AVLTree() {
                         parent->rightleaf = NULL;
                     }
                 }
-                std::cout << "del " << pointer->data.first << std::endl;
                 alloc.deallocate(pointer, 1);
                 pointer = parent;
             }
         }
     }
+}
+
+template <class Tp, class Compare, class Allocator>
+AVLTree<Tp, Compare, Allocator>& AVLTree<Tp, Compare, Allocator>::operator=(const AVLTree& avltree) {
+    if (this != &avltree) {
+        node_type* pointer = getmax(avltree.root);
+        while (pointer != NULL) {
+            this->insert(pointer->data);
+            pointer = getprev(pointer);
+        }
+    }
+    return (*this);
 }
 
 template <class Tp, class Compare, class Allocator>
@@ -129,8 +151,8 @@ Tp* AVLTree<Tp, Compare, Allocator>::insert(Tp& val) {
 }
 
 template <class Tp, class Compare, class Allocator>
-Tp* AVLTree<Tp, Compare, Allocator>::getmin(node_type* pointer) {
-    Tp* rtn = NULL;
+typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Allocator>::getmin(node_type* pointer) {
+    node_type* rtn = NULL;
     if (pointer == NULL) {
         pointer = this->root;
     }
@@ -138,7 +160,7 @@ Tp* AVLTree<Tp, Compare, Allocator>::getmin(node_type* pointer) {
         if (pointer->leftleaf != NULL) {
             pointer = pointer->leftleaf;
         } else {
-            rtn = &(pointer->data);
+            rtn = pointer;
             break ;
         }
     }
@@ -146,8 +168,8 @@ Tp* AVLTree<Tp, Compare, Allocator>::getmin(node_type* pointer) {
 }
 
 template <class Tp, class Compare, class Allocator>
-Tp* AVLTree<Tp, Compare, Allocator>::getmax(node_type* pointer) {
-    Tp* rtn = NULL;
+typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Allocator>::getmax(node_type* pointer) {
+    node_type* rtn = NULL;
     if (pointer == NULL) {
         pointer = this->root;
     }
@@ -155,11 +177,51 @@ Tp* AVLTree<Tp, Compare, Allocator>::getmax(node_type* pointer) {
         if (pointer->rightleaf != NULL) {
             pointer = pointer->rightleaf;
         } else {
-            rtn = &(pointer->data);
+            rtn = pointer;
             break ;
         }
     }
     return (rtn);
+}
+
+template <class Tp, class Compare, class Allocator>
+typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Allocator>::getprev(node_type* pointer) {
+    if (pointer == NULL) {
+        return (NULL);
+    }
+    if (pointer->leftleaf != NULL) {
+        return (getmax(pointer->leftleaf));
+    }
+    node_type* parent = pointer->parent;
+    while (parent != NULL) {
+        if (parent->rightleaf == pointer) {
+            break ;
+        } else {
+            pointer = parent;
+            parent = pointer->parent;
+        }
+    }
+    return (parent);
+}
+
+template <class Tp, class Compare, class Allocator>
+typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Allocator>::getnext(node_type* pointer) {
+    if (pointer == NULL) {
+        return (NULL);
+    }
+    if (pointer->rightleaf != NULL) {
+        return (getmin(pointer->rightleaf));
+    }
+    node_type* parent = pointer->parent;
+    while (parent != NULL) {
+        if (parent->leftleaf == pointer) {
+            break ;
+        } else {
+            pointer = parent;
+            parent = pointer->parent;
+        }
+    }
+    return (parent);
 }
 
 template <class Tp, class Compare, class Allocator>
@@ -242,7 +304,7 @@ void AVLTree<Tp, Compare, Allocator>::delval(Tp& val) {
                 }
                 break ;
             } else {
-                val = *(getmin(pointer->rightleaf));
+                val = getmin(pointer->rightleaf)->data;
                 pointer->data = val;
                 pointer = pointer->rightleaf;
             }
