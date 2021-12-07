@@ -37,7 +37,7 @@ int main() {
     typedef std::pair<int, std::string>                         Type;
     typedef pair_compare<Type, std::less<int> >                 Comp;
     
-    AVLTree<Type, Comp, std::allocator<double> > t;
+    AVLTree<Type, Comp> t;
     for (int i = 0; i < 1000; i++) {
         Type p;
         p.first = i;
