@@ -1,5 +1,5 @@
 #ifndef PAIR_HPP
-#define PAIT_HPP
+#define PAIR_HPP
 namespace ft {
 
     template <class T1, class T2>
@@ -11,15 +11,20 @@ namespace ft {
         second_type second;
 
         //constructor
-        pair() : first(), second() {}
+        pair() : first(), second() {};
+        explicit pair(const first_type& a, const second_type& b) : first(a), second(b) {}
         template<class U, class V>
-        pair (const pair<U,V>& pr) : first(pr.first), second(pr.second) {}
-        pair (const first_type& a, const second_type& b) : first(a), second(b) {}
-
+        pair (const pair<U, V>& pr) {
+            if (this != &pr) {
+                *this = pr;
+            }
+        }
         //operator=
         pair&   operator=(const pair& pr) {
-            first = pr.first;
-            second = pr.second;
+            if (this != &pr) {
+                this->first = pr.first;
+                this->second = pr.second;
+            }
             return *this;
         }
     };

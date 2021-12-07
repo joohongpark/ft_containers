@@ -1,26 +1,18 @@
 #include <iostream>
 #include <string>
-#include <map>
-#include <vector>
+#include "map.hpp"
 
 int main(void) {
-    std::vector<std::pair<int, std::string> > v;
-    std::map<int, std::string> std_map;
-    std::pair<std::map<int, std::string>::iterator, bool> rtn;
+    ft::map<int, std::string> m;
 
-    v.push_back(std::pair<int, std::string>(10, "ten"));
-    v.push_back(std::pair<int, std::string>(9, "nine"));
-
-    std_map[1] = "one";
-    std_map[2] = "two";
-    rtn = std_map.insert(std::pair<int, std::string>(3, "three"));
-
-    std::map<int, std::string>::iterator std_map_iter = std_map.begin();
-
-    while (std_map_iter != std_map.end()) {
-        std::cout << std_map_iter->first << " -> " << std_map_iter->second << std::endl;
-        std_map_iter++;
+    for (int i = 0; i < 33; i++) {
+        m[i] = "문자열";
     }
+
+    for (int i = 0; i < 10; i++) {
+        std::cout << m[i] << std::endl;
+    }
+    m.debug();
 
     return (0);
 }

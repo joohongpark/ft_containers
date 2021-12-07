@@ -5,6 +5,7 @@
 
 #include "pair.hpp"
 #include "functional.hpp"
+#include "AVLTree.hpp"
 
 namespace ft {
     template <
@@ -13,17 +14,17 @@ namespace ft {
         class Allocator = std::allocator< ft::pair<const Key, T> > >
     class map {
         public:
-            typedef Key                                      key_type;
-            typedef T                                        mapped_type;
-            typedef pair<const key_type, mapped_type>        value_type;
-            typedef Compare                                  key_compare;
-            typedef Allocator                                allocator_type;
-            typedef typename allocator_type::reference       reference;
-            typedef typename allocator_type::const_reference const_reference;
-            typedef typename allocator_type::pointer         pointer;
-            typedef typename allocator_type::const_pointer   const_pointer;
-            typedef typename allocator_type::size_type       size_type;
-            typedef typename allocator_type::difference_type difference_type;
+            typedef Key                                             key_type;
+            typedef T                                               mapped_type;
+            typedef pair<const key_type, mapped_type>               value_type;
+            typedef Compare                                         key_compare;
+            typedef Allocator                                       allocator_type;
+            typedef typename allocator_type::reference              reference;
+            typedef typename allocator_type::const_reference        const_reference;
+            typedef typename allocator_type::pointer                pointer;
+            typedef typename allocator_type::const_pointer          const_pointer;
+            typedef typename allocator_type::size_type              size_type;
+            typedef typename allocator_type::difference_type        difference_type;
 /*
             typedef implementation-defined                   iterator;
             typedef implementation-defined                   const_iterator;
@@ -31,28 +32,40 @@ namespace ft {
             typedef std::reverse_iterator<const_iterator>    const_reverse_iterator;
 */
             class value_compare : public binary_function<value_type, value_type, bool> {
-                //friend class map;
                 protected:
-                    Compare comp;
-                    value_compare(Compare c);
+                    key_compare comp;
                 public:
+                    value_compare() : comp() {};
                     bool operator()(const value_type& x, const value_type& y) const {
-                        return (comp(a.first, b.first));
+                        return (comp(x.first, y.first));
                     }
             };
+            typedef AVLTree<value_type, value_compare, Allocator>   tree_type;
 
+        private:
+            tree_type                                               _tree;
+            size_type                                               _size;
+            allocator_type                                          _alloc;
+            key_compare                                             _comp;
+
+        public:
+            void debug() {
+                _tree.__debug();
+            }
             // construct/copy/destroy:
             explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
+/*
             template <class InputIterator>
             map(InputIterator first, InputIterator last,
                 const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
             map(const map& m);
+*/
             ~map();
-
-            // element access:
+            // operator overloading:
             map&                                operator=(const map& m);
             mapped_type&                        operator[](const key_type& k);
 
+/*
             // capacity:
             size_type                           size() const;
             size_type                           max_size() const;
@@ -95,8 +108,9 @@ namespace ft {
 
             void                    swap(map& m);
             allocator_type          get_allocator() const;
+*/
     };
-
+/*
     template <class Key, class T, class Compare, class Allocator>
     bool
     operator==(const map<Key, T, Compare, Allocator>& x,
@@ -133,6 +147,27 @@ namespace ft {
     swap(map<Key, T, Compare, Allocator>& x, map<Key, T, Compare, Allocator>& y) {
         x.swap(y);
     }
+*/
 }
 
+namespace ft {
+
+    // construct/copy/destroy:
+    template <class Key, class T, class Compare, class Allocator>
+    map<Key, T, Compare, Allocator>::map(const key_compare& comp, const allocator_type& alloc) : _size(0), _alloc(alloc), _comp(comp) {}
+    template <class Key, class T, class Compare, class Allocator>
+    map<Key, T, Compare, Allocator>::~map() {}
+
+    // element access:
+    template <class Key, class T, class Compare, class Allocator>
+    T& map<Key, T, Compare, Allocator>::operator[](const key_type& k) {
+        value_type target(k, mapped_type());
+        value_type *find = _tree.find(target);
+        if (find == NULL) {
+            find = _tree.insert(target);
+        }
+        return (find->second);
+    }
+
+}
 #endif
