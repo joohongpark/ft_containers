@@ -31,6 +31,7 @@ class AVLTree {
         node_type*                                                                  root;
     public:
         AVLTree();
+        ~AVLTree();
         Tp*         insert(Tp& val);
         void        delval(Tp& val);
         Tp*         getmin(node_type* pointer = NULL); // NOTE: 없으면 NULL
@@ -59,8 +60,35 @@ class AVLTree {
             }
         }
 };
+
 template <class Tp, class Compare, class Allocator>
 AVLTree<Tp, Compare, Allocator>::AVLTree() : alloc(), comp(), root(NULL) {}
+
+template <class Tp, class Compare, class Allocator>
+AVLTree<Tp, Compare, Allocator>::~AVLTree() {
+    node_type* pointer = this->root;
+    while (pointer != NULL) {
+        if (pointer->leftleaf != NULL) {
+            pointer = pointer->leftleaf;
+        } else {
+            if (pointer->rightleaf != NULL) {
+                pointer = pointer->rightleaf;
+            } else {
+                node_type* parent = pointer->parent;
+                if (parent != NULL) {
+                    if (parent->leftleaf == pointer) {
+                        parent->leftleaf = NULL;
+                    } else {
+                        parent->rightleaf = NULL;
+                    }
+                }
+                std::cout << "del " << pointer->data.first << std::endl;
+                alloc.deallocate(pointer, 1);
+                pointer = parent;
+            }
+        }
+    }
+}
 
 template <class Tp, class Compare, class Allocator>
 Tp* AVLTree<Tp, Compare, Allocator>::insert(Tp& val) {
