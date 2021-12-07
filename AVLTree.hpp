@@ -14,9 +14,7 @@ class AVLTree {
             Node* leftleaf;
             Node* rightleaf;
             long height;
-            void init(T& _data, Node* _parent) {
-                this->data = _data;
-                this->parent = _parent;
+            Node(T& _data, Node* _parent) : data(_data), parent(_parent) {
                 this->leftleaf = NULL;
                 this->rightleaf = NULL;
                 this->height = 0;
@@ -55,7 +53,7 @@ class AVLTree {
             for (long i = 0; i < depth; i++) {
                 std::cout << " ";
             }
-            std::cout << pointer->data.first << std::endl;
+            std::cout << pointer->data.first << " [" << pointer->data.second << "]" << std::endl;
             if (pointer->leftleaf != NULL) {
                 __debug(depth + 1, pointer->leftleaf);
             }
@@ -71,14 +69,14 @@ Tp* AVLTree<Tp, Compare, Allocator>::insert(Tp& val) {
     while (true) {
         if (pointer == NULL) {
             this->root = alloc.allocate(1);
-            this->root->init(val, NULL);
+            alloc.construct(this->root, val, static_cast<node_type *>(NULL));
             rewind(pointer);
             rtn = &(this->root->data);
             break ;
         } else if (comp(val, pointer->data)) {
             if (pointer->leftleaf == NULL) {
                 pointer->leftleaf = alloc.allocate(1);
-                pointer->leftleaf->init(val, pointer);
+                alloc.construct(pointer->leftleaf, val, pointer);
                 rewind(pointer->leftleaf);
                 rtn = &(pointer->leftleaf->data);
                 break ;
@@ -88,7 +86,7 @@ Tp* AVLTree<Tp, Compare, Allocator>::insert(Tp& val) {
         } else if (comp(pointer->data, val)) {
             if (pointer->rightleaf == NULL) {
                 pointer->rightleaf = alloc.allocate(1);
-                pointer->rightleaf->init(val, pointer);
+                alloc.construct(pointer->rightleaf, val, pointer);
                 rewind(pointer->rightleaf);
                 rtn = &(pointer->rightleaf->data);
                 break ;
@@ -278,7 +276,7 @@ void AVLTree<Tp, Compare, Allocator>::rewind(node_type* node) {
                 }
             }
             if (bf > 1 || bf < -1) {
-                if (parent->leftleaf == node && bf > 1 || parent->rightleaf == node && bf < -1) {
+                if ((parent->leftleaf == node && bf > 1) || (parent->rightleaf == node && bf < -1)) {
                     int nt = nodetype(parent, node, child);
                     if (nt == 0) {
                         rightrotate(parent);
