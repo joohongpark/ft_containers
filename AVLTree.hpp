@@ -14,7 +14,7 @@ class AVLTree {
             Node* leftleaf;
             Node* rightleaf;
             long height;
-            void init(T _data, Node* _parent) {
+            void init(T& _data, Node* _parent) {
                 this->data = _data;
                 this->parent = _parent;
                 this->leftleaf = NULL;
@@ -33,8 +33,8 @@ class AVLTree {
         node_type*                                                                  root;
     public:
         AVLTree();
-        Tp*         insert(Tp val);
-        void        delval(Tp val);
+        Tp*         insert(Tp& val);
+        void        delval(Tp& val);
         Tp*         getmin(node_type* pointer = NULL); // NOTE: 없으면 NULL
         Tp*         getmax(node_type* pointer = NULL); // NOTE: 없으면 NULL
         Tp*         find(Tp& val); // NOTE: 없으면 NULL
@@ -62,11 +62,10 @@ class AVLTree {
         }
 };
 template <class Tp, class Compare, class Allocator>
-AVLTree<Tp, Compare, Allocator>::AVLTree() : root(NULL) {}
-
+AVLTree<Tp, Compare, Allocator>::AVLTree() : alloc(), comp(), root(NULL) {}
 
 template <class Tp, class Compare, class Allocator>
-Tp* AVLTree<Tp, Compare, Allocator>::insert(Tp val) {
+Tp* AVLTree<Tp, Compare, Allocator>::insert(Tp& val) {
     node_type* pointer = this->root;
     Tp* rtn = NULL;
     while (true) {
@@ -165,7 +164,7 @@ Tp* AVLTree<Tp, Compare, Allocator>::find(Tp& val) {
 }
 
 template <class Tp, class Compare, class Allocator>
-void AVLTree<Tp, Compare, Allocator>::delval(Tp val) {
+void AVLTree<Tp, Compare, Allocator>::delval(Tp& val) {
     node_type* pointer = this->root;
     while (pointer != NULL) {
         if (comp(pointer->data, val)) {
