@@ -6,12 +6,14 @@
 #include "pair.hpp"
 #include "functional.hpp"
 #include "AVLTree.hpp"
+#include "map_iterator.hpp"
+#include "reverse_iterator.hpp"
 
 namespace ft {
     template <
         class Key, class T,
         class Compare = ft::less<Key>,
-        class Allocator = std::allocator< ft::pair<const Key, T> > >
+        class Allocator = std::allocator< pair<const Key, T> > >
     class map {
         public:
             typedef Key                                             key_type;
@@ -25,12 +27,6 @@ namespace ft {
             typedef typename allocator_type::const_pointer          const_pointer;
             typedef typename allocator_type::size_type              size_type;
             typedef typename allocator_type::difference_type        difference_type;
-/*
-            typedef implementation-defined                   iterator;
-            typedef implementation-defined                   const_iterator;
-            typedef std::reverse_iterator<iterator>          reverse_iterator;
-            typedef std::reverse_iterator<const_iterator>    const_reverse_iterator;
-*/
             class value_compare : public binary_function<value_type, value_type, bool> {
                 protected:
                     key_compare comp;
@@ -41,7 +37,11 @@ namespace ft {
                     }
             };
             typedef AVLTree<value_type, value_compare, Allocator>   tree_type;
-
+            typedef map_iterator<tree_type>                         iterator;
+            typedef map_iterator<const tree_type>                   const_iterator;
+            // FIXME: 리버스 이터레이터 개선 필요
+            typedef ft::reverse_iterator<iterator>                  reverse_iterator;
+            typedef ft::reverse_iterator<const_iterator>            const_reverse_iterator;
         private:
             tree_type                                               _tree;
             size_type                                               _size;
@@ -58,20 +58,20 @@ namespace ft {
             template <class InputIterator>
             map(InputIterator first, InputIterator last,
                 const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
-            map(const map& m);
 */
+            map(const map& m);
             ~map();
             // operator overloading:
             map&                                operator=(const map& m);
             mapped_type&                        operator[](const key_type& k);
 
-/*
             // capacity:
             size_type                           size() const;
             size_type                           max_size() const;
             bool                                empty() const;
 
             // modifiers:
+/*
             pair<iterator, bool>                insert(const value_type& v);
             iterator                            insert(const_iterator position, const value_type& v);
             template <class InputIterator>
@@ -91,17 +91,18 @@ namespace ft {
             const_iterator                      upper_bound(const key_type& k) const;
             pair<iterator,iterator>             equal_range(const key_type& k);
             pair<const_iterator,const_iterator> equal_range(const key_type& k) const;
-
+*/
             // iterators:
             iterator                begin();
             const_iterator          begin() const;
             iterator                end();
             const_iterator          end() const;
+            // FIXME: 리버스 이터레이터 개선 필요
             reverse_iterator        rbegin();
             const_reverse_iterator  rbegin() const;
             reverse_iterator        rend();
             const_reverse_iterator  rend() const;
-
+/*
             // observers:
             key_compare             key_comp()      const;
             value_compare           value_comp()    const;
@@ -155,19 +156,94 @@ namespace ft {
     // construct/copy/destroy:
     template <class Key, class T, class Compare, class Allocator>
     map<Key, T, Compare, Allocator>::map(const key_compare& comp, const allocator_type& alloc) : _size(0), _alloc(alloc), _comp(comp) {}
+
+    template <class Key, class T, class Compare, class Allocator>
+    map<Key, T, Compare, Allocator>::map(const map& m) {
+        if (this != &m) {
+            *this = m;
+        }
+    }
+
     template <class Key, class T, class Compare, class Allocator>
     map<Key, T, Compare, Allocator>::~map() {}
 
-    // element access:
+    // operator overloading:
+    template <class Key, class T, class Compare, class Allocator>
+    map<Key, T, Compare, Allocator>& map<Key, T, Compare, Allocator>::operator=(const map& m) {
+        if (this != &m) {
+            this->_tree = m._tree;
+            this->_size = m._size;
+            this->_alloc = m._alloc;
+            this->_comp = m._comp;
+        }
+        return (*this);
+    }
+
     template <class Key, class T, class Compare, class Allocator>
     T& map<Key, T, Compare, Allocator>::operator[](const key_type& k) {
         value_type target(k, mapped_type());
         value_type *find = _tree.find(target);
         if (find == NULL) {
+            _size++;
             find = _tree.insert(target);
         }
         return (find->second);
     }
 
+    // capacity:
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::size_type map<Key, T, Compare, Allocator>::size() const {
+        return (_size);
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::size_type map<Key, T, Compare, Allocator>::max_size() const {
+        return (_tree.max_size());
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    bool map<Key, T, Compare, Allocator>::empty() const {
+        return (_size == 0);
+    }
+
+    // iterators:
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::iterator map<Key, T, Compare, Allocator>::begin() {
+        return (iterator(_tree.begin()));
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::const_iterator map<Key, T, Compare, Allocator>::begin() const {
+        return (const_iterator(_tree.begin()));
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::iterator map<Key, T, Compare, Allocator>::end() {
+        return (iterator(NULL));
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::const_iterator map<Key, T, Compare, Allocator>::end() const {
+        return (const_iterator(NULL));
+    }
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::reverse_iterator map<Key, T, Compare, Allocator>::rbegin() {
+        return (reverse_iterator(_tree.begin()));
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::const_reverse_iterator map<Key, T, Compare, Allocator>::rbegin() const {
+        return (const_reverse_iterator(_tree.begin()));
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::reverse_iterator map<Key, T, Compare, Allocator>::rend() {
+        return (reverse_iterator(NULL));
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::const_reverse_iterator map<Key, T, Compare, Allocator>::rend() const {
+        return (const_reverse_iterator(NULL));
+    }
 }
 #endif

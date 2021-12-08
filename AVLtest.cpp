@@ -48,10 +48,6 @@ int main() {
             return (-1);
         }
     }
-    AVLTree<Type, Comp>::node_type* min = t.getmin();
-    std::cout << "min : " << min->data.first << " (" << min->data.second << ")" << std::endl;
-    AVLTree<Type, Comp>::node_type* max = t.getmax();
-    std::cout << "max : " << max->data.first << " (" << max->data.second << ")" << std::endl;
     Type target;
     target.first = 10;
     Type *f = t.find(target);
