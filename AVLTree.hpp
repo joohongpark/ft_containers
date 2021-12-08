@@ -9,6 +9,7 @@ class AVLTree {
     private:
         template <class T>
         struct Node {
+            typedef T                                                               value_type;
             T data;
             Node* parent;
             Node* leftleaf;
@@ -25,22 +26,28 @@ class AVLTree {
         typedef Allocator                                                           origin_allocator_type;
         typedef typename origin_allocator_type::template rebind<node_type>::other   node_allocator_type; // http://egloos.zum.com/sweeper/v/2966785
         typedef Compare                                                             value_compare;
+        typedef typename node_allocator_type::size_type                             size_type;
     private:
         node_allocator_type                                                         alloc;
         value_compare                                                               comp;
         node_type*                                                                  root;
     public:
+        // construct/copy/destroy/operator:
         AVLTree();
         AVLTree(const AVLTree& avltree);
         ~AVLTree();
-        AVLTree&    operator=(const AVLTree& avltree);
-        Tp*         insert(Tp& val);
-        void        delval(Tp& val);
-        node_type*  getmin(node_type* pointer = NULL); // NOTE: 없으면 NULL
-        node_type*  getmax(node_type* pointer = NULL); // NOTE: 없으면 NULL
-        node_type*  getprev(node_type* pointer); // NOTE: 없으면 NULL
-        node_type*  getnext(node_type* pointer); // NOTE: 없으면 NULL
-        Tp*         find(Tp& val); // NOTE: 없으면 NULL
+        AVLTree&            operator=(const AVLTree& avltree);
+        // Tree 필수 메소드
+        Tp*                 insert(Tp& val);
+        Tp*                 find(Tp& val); // NOTE: 없으면 NULL
+        void                delval(Tp& val);
+        static node_type*   getmin(node_type* pointer);
+        static node_type*   getmax(node_type* pointer);
+        static node_type*   getprev(node_type* pointer);
+        static node_type*   getnext(node_type* pointer);
+        // for iterator
+        size_type           max_size() const;
+        node_type*          begin();
     private:
         long        getbf(node_type* node);
         int         nodetype(node_type* parent, node_type* node, node_type* child);
@@ -153,9 +160,6 @@ Tp* AVLTree<Tp, Compare, Allocator>::insert(Tp& val) {
 template <class Tp, class Compare, class Allocator>
 typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Allocator>::getmin(node_type* pointer) {
     node_type* rtn = NULL;
-    if (pointer == NULL) {
-        pointer = this->root;
-    }
     while (pointer != NULL) {
         if (pointer->leftleaf != NULL) {
             pointer = pointer->leftleaf;
@@ -170,9 +174,6 @@ typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Alloca
 template <class Tp, class Compare, class Allocator>
 typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Allocator>::getmax(node_type* pointer) {
     node_type* rtn = NULL;
-    if (pointer == NULL) {
-        pointer = this->root;
-    }
     while (pointer != NULL) {
         if (pointer->rightleaf != NULL) {
             pointer = pointer->rightleaf;
@@ -249,6 +250,16 @@ Tp* AVLTree<Tp, Compare, Allocator>::find(Tp& val) {
         }
     }
     return (rtn);
+}
+
+template <class Tp, class Compare, class Allocator>
+typename AVLTree<Tp, Compare, Allocator>::size_type AVLTree<Tp, Compare, Allocator>::max_size() const {
+    return (alloc.max_size());
+}
+
+template <class Tp, class Compare, class Allocator>
+typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Allocator>::begin() {
+    return (getmin(this->root));
 }
 
 template <class Tp, class Compare, class Allocator>
