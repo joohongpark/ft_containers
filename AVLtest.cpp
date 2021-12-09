@@ -34,30 +34,30 @@ struct pair_compare : public Compare {
 };
 
 int main() {
-    typedef std::pair<int, std::string>                         Type;
+    typedef std::pair<const int, std::string>                   Type;
     typedef pair_compare<Type, std::less<int> >                 Comp;
     
     AVLTree<Type, Comp> t;
     for (int i = 0; i < 1000; i++) {
-        Type p;
-        p.first = i;
-        p.second = "문자열";
+        Type p(i, "문자열");
         Type *f = t.insert(p);
         if (f->first != i) {
             std::cout << "ERROR!" << std::endl;
             return (-1);
         }
     }
-    Type target;
-    target.first = 10;
+    Type target(10, "");
     Type *f = t.find(target);
     AVLTree<Type, Comp> cp(t);
     std::cout << "find : " << f->first << " (" << f->second << ")" << std::endl;
-    for (int i = 0; i < 998; i++) {
-        Type p;
-        p.first = i;
-        cp.delval(p);
+    for (int i = 0; i < 1000; i++) {
+        if (i % 2 == 0) {
+            Type p(i + 1, "");
+            cp.delval(p);
+        }
     }
+    Type p(1000, "");
+    cp.delval(p);
     cp.__debug();
     return (0);
 }
