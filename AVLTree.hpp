@@ -48,6 +48,7 @@ class AVLTree {
         // for iterator
         size_type           max_size() const;
         node_type*          begin();
+        node_type*          end();
     private:
         long        getbf(node_type* node);
         int         nodetype(node_type* parent, node_type* node, node_type* child);
@@ -260,6 +261,11 @@ typename AVLTree<Tp, Compare, Allocator>::size_type AVLTree<Tp, Compare, Allocat
 template <class Tp, class Compare, class Allocator>
 typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Allocator>::begin() {
     return (getmin(this->root));
+}
+
+template <class Tp, class Compare, class Allocator>
+typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Allocator>::end() {
+    return (getmax(this->root));
 }
 
 template <class Tp, class Compare, class Allocator>
