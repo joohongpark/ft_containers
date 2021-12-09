@@ -219,31 +219,32 @@ namespace ft {
 
     template <class Key, class T, class Compare, class Allocator>
     typename map<Key, T, Compare, Allocator>::iterator map<Key, T, Compare, Allocator>::end() {
-        return (iterator(NULL));
+        return (++iterator(_tree.end()));
     }
 
     template <class Key, class T, class Compare, class Allocator>
     typename map<Key, T, Compare, Allocator>::const_iterator map<Key, T, Compare, Allocator>::end() const {
-        return (const_iterator(NULL));
+        return (++const_iterator(_tree.end()));
     }
+
     template <class Key, class T, class Compare, class Allocator>
     typename map<Key, T, Compare, Allocator>::reverse_iterator map<Key, T, Compare, Allocator>::rbegin() {
-        return (reverse_iterator(_tree.begin()));
+        return (reverse_iterator(end()));
     }
 
     template <class Key, class T, class Compare, class Allocator>
     typename map<Key, T, Compare, Allocator>::const_reverse_iterator map<Key, T, Compare, Allocator>::rbegin() const {
-        return (const_reverse_iterator(_tree.begin()));
+        return (const_reverse_iterator(end()));
     }
 
     template <class Key, class T, class Compare, class Allocator>
     typename map<Key, T, Compare, Allocator>::reverse_iterator map<Key, T, Compare, Allocator>::rend() {
-        return (reverse_iterator(NULL));
+        return (reverse_iterator(begin()));
     }
 
     template <class Key, class T, class Compare, class Allocator>
     typename map<Key, T, Compare, Allocator>::const_reverse_iterator map<Key, T, Compare, Allocator>::rend() const {
-        return (const_reverse_iterator(NULL));
+        return (const_reverse_iterator(begin()));
     }
 }
 #endif

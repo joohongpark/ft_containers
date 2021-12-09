@@ -7,24 +7,27 @@ int main(void) {
     ft::map<int, std::string> m;
     std::map<int, std::string> m1;
 
-    for (int i = 0; i < 33; i++) {
+    for (int i = 0; i < 5; i++) {
         m[i] = "문자열";
         m1[i] = "문자열";
     }
 
-    std::map<int, std::string>::reverse_iterator iter = m1.rbegin();
-    std::cout << (*iter).first << std::endl;
-    while (iter != m1.rend()) {
+    ft::map<int, std::string>::iterator eiter = m.end();
+    eiter--;
+    std::cout << "end-- : " << (*eiter).first << std::endl;
+
+
+    ft::map<int, std::string>::iterator iter = m.begin();
+    while (iter != m.end()) {
         std::cout << (*iter).first << std::endl;
         iter++;
     }
-
-    ft::map<int, std::string>::const_iterator citer = m.begin();
-    while (citer != m.end()) {
-        std::cout << (*citer).second << std::endl;
-        citer++;
+    std::cout << "============================" << std::endl;
+    ft::map<int, std::string>::reverse_iterator riter = m.rbegin();
+    while (riter != m.rend()) {
+        std::cout << (*riter).first << std::endl;
+        riter++;
     }
-
     /*
     for (int i = 0; i < 10; i++) {
         std::cout << m[i] << std::endl;

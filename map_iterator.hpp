@@ -3,6 +3,7 @@
 
 #include "iterator_traits.hpp"
 #include "type_traits.hpp"
+#include <iostream>
 
 namespace ft {
     template <class T>
@@ -18,9 +19,10 @@ namespace ft {
             typedef typename choose_type<is_const<T>::value, const value_type&, value_type&>::type      reference; // #NOTE map의 iterator / const_iterator 차이점이 이거밖에 없는듯
         private:
             iterator_type iter;
+            bool is_end; // #NOTE: 트리 구조에서 실제로 존재하지 않는 end() 이터레이터를 표현하기 위한 플래그
         public:
-            map_iterator() : iter(NULL) {};
-            map_iterator(const iterator_type& x) : iter(x) {}
+            map_iterator() : iter(NULL), is_end(true) {};
+            map_iterator(const iterator_type& x) : iter(x), is_end(false) {};
             template <class Type> // #NOTE: 이게 있어야 const_iterator까지 커버됨. 왜그런지는 아직 잘 모름
             map_iterator(const map_iterator<Type>& i, typename enable_if<!is_const<Type>::value>::type* = 0) : iter(i.base()) {}
 
@@ -31,7 +33,18 @@ namespace ft {
                 return (&(iter->data));
             }
             map_iterator& operator++() {
-                iter = tree::getnext(iter);
+                iterator_type iter_next = tree::getnext(iter);
+                if (is_end == true) {
+                    if (iter_next != NULL) {
+                        is_end = false;
+                    }
+                } else {
+                    if (iter_next == NULL) {
+                        is_end = true;
+                    } else {
+                        iter = iter_next;
+                    }
+                }
                 return *this;
             }
             map_iterator operator++(int) {
@@ -40,7 +53,18 @@ namespace ft {
                 return __t;
             }
             map_iterator& operator--() {
-                iter = tree::getprev(iter);
+                iterator_type iter_prev = tree::getprev(iter);
+                if (is_end == true) {
+                    if (iter_prev != NULL) {
+                        is_end = false;
+                    }
+                } else {
+                    if (iter_prev == NULL) {
+                        is_end = true;
+                    } else {
+                        iter = iter_prev;
+                    }
+                }
                 return *this;
             }
             map_iterator operator--(int) {
@@ -51,12 +75,15 @@ namespace ft {
             iterator_type base() const {
                 return (iter);
             }
+            bool end_check() const {
+                return (is_end);
+            }
     };
     template <class T1, class T2>
-    bool operator==(const map_iterator<T1>& x, const map_iterator<T2>& y) { return bool(x.base() == y.base()); }
+    bool operator==(const map_iterator<T1>& x, const map_iterator<T2>& y) { return bool((x.base() == y.base()) && (x.end_check() == y.end_check())); }
     template <class T>
-    bool operator!=(const map_iterator<T >& x, const map_iterator<T >& y) { return bool(x.base() != y.base()); }
+    bool operator!=(const map_iterator<T >& x, const map_iterator<T >& y) { return bool((x.base() != y.base()) || (x.end_check() != y.end_check())); }
     template <class T1, class T2>
-    bool operator!=(const map_iterator<T1>& x, const map_iterator<T2>& y) { return bool(x.base() != y.base()); }
+    bool operator!=(const map_iterator<T1>& x, const map_iterator<T2>& y) { return bool((x.base() != y.base()) || (x.end_check() != y.end_check())); }
 }
 #endif
