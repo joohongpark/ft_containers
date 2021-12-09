@@ -294,6 +294,7 @@ void AVLTree<Tp, Compare, Allocator>::clear() {
             }
         }
     }
+    this->root = NULL;
 }
 
 template <class Tp, class Compare, class Allocator>

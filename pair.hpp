@@ -14,18 +14,15 @@ namespace ft {
         pair() : first(), second() {};
         explicit pair(const first_type& a, const second_type& b) : first(a), second(b) {}
         template<class U, class V>
-        pair (const pair<U, V>& pr) {
-            if (this != &pr) {
-                *this = pr;
-            }
-        }
+        pair (const pair<U, V>& pr) : first(pr.first), second(pr.second) {}
+
         //operator=
         pair&   operator=(const pair& pr) {
             if (this != &pr) {
                 this->first = pr.first;
                 this->second = pr.second;
             }
-            return *this;
+            return (*this);
         }
     };
 

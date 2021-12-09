@@ -1,40 +1,35 @@
 #include <iostream>
 #include <string>
-#include "map.hpp"
-#include <map>
+#include "map_module_tester.hpp"
 
 int main(void) {
-    ft::map<int, std::string> m;
-    std::map<int, std::string> m1;
-
-    for (int i = 0; i < 5; i++) {
-        m[i] = "문자열";
-        m1[i] = "문자열";
+    if((insert_value_method_tester(0, "문자열") != true)
+    || insert_value_method_tester(1000, "문자열") != true) {
+        std::cout << "Error" << std::endl;
+    } else {
+        std::cout << "OK" << std::endl;
     }
-
-    ft::map<int, std::string>::iterator eiter = m.end();
-    eiter--;
-    std::cout << "end-- : " << (*eiter).first << std::endl;
-
-
-    ft::map<int, std::string>::iterator iter = m.begin();
-    while (iter != m.end()) {
-        std::cout << (*iter).first << std::endl;
-        iter++;
+    if((insert_iter_method_tester(0, "문자열") != true)
+    || insert_iter_method_tester(1000, "문자열") != true
+    || insert_iter_method_tester(2, "문1자열") != true) {
+        std::cout << "Error" << std::endl;
+    } else {
+        std::cout << "OK" << std::endl;
     }
-    std::cout << "============================" << std::endl;
-    ft::map<int, std::string>::reverse_iterator riter = m.rbegin();
-    while (riter != m.rend()) {
-        std::cout << (*riter).first << std::endl;
-        riter++;
+    if(insert_inputiter_method_tester() != true) {
+        std::cout << "Error" << std::endl;
+    } else {
+        std::cout << "OK" << std::endl;
     }
-    /*
-    for (int i = 0; i < 10; i++) {
-        std::cout << m[i] << std::endl;
+    if(erase_method_tester() != true) {
+        std::cout << "Error" << std::endl;
+    } else {
+        std::cout << "OK" << std::endl;
     }
-    m.debug();
-    std::cout << "map size : " << m.size() << std::endl;
-    std::cout << "map max size : " << m.max_size() << std::endl;
-    */
+    if (clear_method_tester() != true) {
+        std::cout << "Error" << std::endl;
+    } else {
+        std::cout << "OK" << std::endl;
+    }
     return (0);
 }

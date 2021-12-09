@@ -39,7 +39,6 @@ namespace ft {
             typedef AVLTree<value_type, value_compare, Allocator>   tree_type;
             typedef map_iterator<tree_type>                         iterator;
             typedef map_iterator<const tree_type>                   const_iterator;
-            // FIXME: 리버스 이터레이터 개선 필요
             typedef ft::reverse_iterator<iterator>                  reverse_iterator;
             typedef ft::reverse_iterator<const_iterator>            const_reverse_iterator;
         private:
@@ -71,16 +70,16 @@ namespace ft {
             bool                                empty() const;
 
             // modifiers:
-/*
             pair<iterator, bool>                insert(const value_type& v);
             iterator                            insert(const_iterator position, const value_type& v);
             template <class InputIterator>
-            void                                insert(InputIterator first, InputIterator last);
+            void                                insert(InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last);
             iterator                            erase(const_iterator position);
             size_type                           erase(const key_type& k);
             iterator                            erase(const_iterator first, const_iterator last);
             void                                clear();
 
+/*
             // map operations:
             size_type                           count(const key_type& k) const;
             iterator                            find(const key_type& k);
@@ -97,7 +96,6 @@ namespace ft {
             const_iterator          begin() const;
             iterator                end();
             const_iterator          end() const;
-            // FIXME: 리버스 이터레이터 개선 필요
             reverse_iterator        rbegin();
             const_reverse_iterator  rbegin() const;
             reverse_iterator        rend();
@@ -204,6 +202,78 @@ namespace ft {
     template <class Key, class T, class Compare, class Allocator>
     bool map<Key, T, Compare, Allocator>::empty() const {
         return (_size == 0);
+    }
+
+    // modifiers:
+    template <class Key, class T, class Compare, class Allocator>
+    pair<typename map<Key, T, Compare, Allocator>::iterator, bool> map<Key, T, Compare, Allocator>::insert(const value_type& v) {
+        pair<iterator, bool> rtn;
+        value_type* new_val = _tree.insert(v);
+        rtn.first = iterator(_tree.getnode(v));
+        if (new_val != NULL) {
+            _size++;
+            rtn.second = true;
+        } else {
+            rtn.second = false;
+        }
+        return (rtn);
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::iterator map<Key, T, Compare, Allocator>::insert(const_iterator position, const value_type& v) {
+        (void) position;
+        value_type* new_val = _tree.insert(v);
+        if (new_val != NULL) {
+            _size++;
+        }
+        return (iterator(_tree.getnode(v)));
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    template <class InputIterator>
+    void map<Key, T, Compare, Allocator>::insert(InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last) {
+        while (first != last) {
+            _size++;
+            _tree.insert(*first);
+            first++;
+        }
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::iterator map<Key, T, Compare, Allocator>::erase(const_iterator position) {
+        // FIXME: 개선 필요
+        value_type v(*position);
+        iterator rtn(_tree.getnode(v));
+        rtn++;
+        if (_tree.delval(v) == true) {
+            _size--;
+        }
+        return (rtn);
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::size_type map<Key, T, Compare, Allocator>::erase(const key_type& k) {
+        value_type target(k, mapped_type());
+        if (_tree.delval(target) == true) {
+            _size--;
+        }
+        return (_size);
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::iterator map<Key, T, Compare, Allocator>::erase(const_iterator first, const_iterator last) {
+        while (first != last) {
+            if (_tree.delval(*first) == true) {
+                _size--;
+            }
+            first++;
+        }
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    void map<Key, T, Compare, Allocator>::clear() {
+        _size = 0;
+        _tree.clear();
     }
 
     // iterators:
