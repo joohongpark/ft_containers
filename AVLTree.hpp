@@ -79,6 +79,7 @@ class AVLTree {
         AVLTree&            operator=(const AVLTree& avltree);
         // Tree 필수 메소드
         Tp*                 insert(const Tp& val);
+        bool                have(Tp& val) const; // 객체 멤버변수가 변하지 않음을 보증
         Tp*                 find(Tp& val); // NOTE: 없으면 NULL
         bool                delval(Tp& val);
         node_type*          getnode(const Tp& val);
@@ -298,6 +299,33 @@ void AVLTree<Tp, Compare, Allocator>::clear() {
 }
 
 template <class Tp, class Compare, class Allocator>
+bool AVLTree<Tp, Compare, Allocator>::have(Tp& val) const {
+    bool rtn = false;
+    node_type* pointer = this->root;
+    while (true) {
+        if (pointer == NULL) {
+            break ;
+        } else if (comp(val, pointer->data)) {
+            if (pointer->leftleaf == NULL) {
+                break ;
+            } else {
+                pointer = pointer->leftleaf;
+            }
+        } else if (comp(pointer->data, val)) {
+            if (pointer->rightleaf == NULL) {
+                break ;
+            } else {
+                pointer = pointer->rightleaf;
+            }
+        } else {
+            rtn = true;
+            break ;
+        }
+    }
+    return (rtn);
+}
+
+template <class Tp, class Compare, class Allocator>
 Tp* AVLTree<Tp, Compare, Allocator>::find(Tp& val) {
     Tp* rtn = NULL;
     node_type* pointer = this->root;
@@ -360,16 +388,14 @@ bool AVLTree<Tp, Compare, Allocator>::delval(Tp& val) {
                 if (pointer->parent != NULL) {
                     if (pointer->parent->leftleaf == pointer) {
                         pointer->parent->leftleaf = NULL;
-                        alloc.deallocate(pointer, 1);
                     } else {
                         pointer->parent->rightleaf = NULL;
-                        alloc.deallocate(pointer, 1);
                     }
                     rewind(pointer->parent);
                 } else {
-                    alloc.deallocate(this->root, 1);
                     this->root = NULL;
                 }
+                alloc.deallocate(pointer, 1);
                 break ;
             } else if (pointer->leftleaf == NULL && pointer->rightleaf != NULL) {
                 if (pointer->parent != NULL) {
