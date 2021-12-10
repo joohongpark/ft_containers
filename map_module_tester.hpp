@@ -223,4 +223,158 @@ bool clear_method_tester() {
     return (true);
 }
 
+bool count_method_tester() {
+    ft::map<int, std::string> ft_map;
+    std::map<int, std::string> std_map;
+
+    for (int i = 0; i < 15; i++) {
+        ft_map[i] = "문자열";
+        std_map[i] = "문자열";
+    }
+    if (ft_map.count(-1) != std_map.count(-1)) {
+        std::cout << "[" << __func__ << "]" << std::endl;
+        std::cout << "ft_map.count(-1) : " << ft_map.count(-1) << std::endl;
+        std::cout << "std_map.count(-1) : " << std_map.count(-1) << std::endl;
+        return (false);
+    }
+    if (ft_map.count(1) != std_map.count(1)) {
+        std::cout << "[" << __func__ << "]" << std::endl;
+        std::cout << "ft_map.count(1) : " << ft_map.count(1) << std::endl;
+        std::cout << "std_map.count(1) : " << std_map.count(1) << std::endl;
+        return (false);
+    }
+    if (ft_map.count(10) != std_map.count(10)) {
+        std::cout << "[" << __func__ << "]" << std::endl;
+        std::cout << "ft_map.count(10) : " << ft_map.count(10) << std::endl;
+        std::cout << "std_map.count(10) : " << std_map.count(10) << std::endl;
+        return (false);
+    }
+
+    return (true);
+}
+
+bool find_method_tester() {
+    ft::map<int, std::string> ft_map;
+    std::map<int, std::string> std_map;
+
+    for (int i = 0; i < 15; i++) {
+        ft_map[i] = "문자열";
+        std_map[i] = "문자열";
+    }
+
+    if (ft_map.find(-1) != ft_map.end()) {
+        std::cout << "[" << __func__ << "]" << std::endl;
+        std::cout << "ft_map.find(-1) != ft_map.end()" << std::endl;
+        return (false);
+    }
+    if ((*(ft_map.find(1))).first != (*(std_map.find(1))).first) {
+        std::cout << "[" << __func__ << "]" << std::endl;
+        std::cout << "(*(ft_map.find(1))).first : " << (*(ft_map.find(1))).first << std::endl;
+        std::cout << "(*(std_map.find(1))).first : " << (*(std_map.find(1))).first << std::endl;
+        return (false);
+    }
+    if ((*(ft_map.find(1))).first != (*(std_map.find(1))).first) {
+        std::cout << "[" << __func__ << "]" << std::endl;
+        std::cout << "(*(ft_map.find(1))).first : " << (*(ft_map.find(1))).first << std::endl;
+        std::cout << "(*(std_map.find(1))).first : " << (*(std_map.find(1))).first << std::endl;
+        return (false);
+    }
+    return (true);
+}
+
+bool bound_method_tester() {
+    ft::map<int, char> ft_map;
+    std::map<int, char> std_map;
+    typedef ft::map<int, char>::iterator ftiter;
+    typedef std::map<int, char>::iterator stditer;
+
+    for (int i = 0; i < 15; i++) {
+        ft_map[i] = char('a' + i);
+        std_map[i] = char('a' + i);
+    }
+
+    ftiter ft_iter_lower = ft_map.lower_bound(2);
+    stditer std_iter_lower = std_map.lower_bound(2);
+
+    if ((*(ft_iter_lower)).second != (*(std_iter_lower)).second) {
+        std::cout << "[" << __func__ << "]" << std::endl;
+        std::cout << "(*(ft_iter_lower)).second : " << (*(ft_iter_lower)).second << std::endl;
+        std::cout << "(*(std_iter_lower)).second : " << (*(std_iter_lower)).second << std::endl;
+        return (false);
+    }
+
+    ftiter ft_iter_upper = ft_map.upper_bound(4);
+    stditer std_iter_upper = std_map.upper_bound(4);
+
+    if ((*(ft_iter_upper)).second != (*(std_iter_upper)).second) {
+        std::cout << "[" << __func__ << "]" << std::endl;
+        std::cout << "(*(ft_iter_upper)).second : " << (*(ft_iter_upper)).second << std::endl;
+        std::cout << "(*(std_iter_upper)).second : " << (*(std_iter_upper)).second << std::endl;
+        return (false);
+    }
+
+    ftiter ft_iter_lower_small = ft_map.lower_bound(-1);
+    stditer std_iter_upper_small = std_map.lower_bound(-1);
+
+    if ((*(ft_iter_lower_small)).second != (*(std_iter_upper_small)).second) {
+        std::cout << "[" << __func__ << "]" << std::endl;
+        std::cout << "(*(ft_iter_lower_small)).second : " << (*(ft_iter_lower_small)).second << std::endl;
+        std::cout << "(*(std_iter_upper_small)).second : " << (*(std_iter_upper_small)).second << std::endl;
+        return (false);
+    }
+
+    return (true);
+}
+
+bool equal_method_tester() {
+    ft::map<int, char> ft_map;
+    std::map<int, char> std_map;
+    typedef ft::map<int, char>::iterator ftiter;
+    typedef std::map<int, char>::iterator stditer;
+    typedef ft::pair<ftiter, ftiter> ftiterpair;
+    typedef std::pair<stditer, stditer> stditerpair;
+
+    for (int i = 0; i < 15; i++) {
+        ft_map[i] = char('a' + i);
+        std_map[i] = char('a' + i);
+    }
+
+    ftiterpair ft_iter_p = ft_map.equal_range(2);
+    stditerpair std_iter_p = std_map.equal_range(2);
+
+    if (((*(ft_iter_p.first)).second != (*(std_iter_p.first)).second)
+      || (*(ft_iter_p.second)).second != (*(std_iter_p.second)).second) {
+        std::cout << "[" << __func__ << "]" << std::endl;
+        std::cout << "(*(ft_iter_p.first)).second : " << (*(ft_iter_p.first)).second << std::endl;
+        std::cout << "(*(std_iter_p.first)).second : " << (*(std_iter_p.first)).second << std::endl;
+        std::cout << "(*(ft_iter_p.second)).second : " << (*(ft_iter_p.second)).second << std::endl;
+        std::cout << "(*(std_iter_p.second)).second : " << (*(std_iter_p.second)).second << std::endl;
+        return (false);
+    }
+
+    ftiterpair ft_iter_p_begin = ft_map.equal_range(-42);
+    stditerpair std_iter_p_begin = std_map.equal_range(-42);
+    if ((ft_iter_p_begin.first != ft_iter_p_begin.second)
+      || (ft_iter_p_begin.first != ft_map.begin())
+      || (std_iter_p_begin.first != std_iter_p_begin.second)
+      || (std_iter_p_begin.first != std_map.begin())) {
+        std::cout << "(*(ft_iter_p_begin.second)).second : " << (*(ft_iter_p_begin.second)).second << std::endl;
+        std::cout << "(*(std_iter_p_begin.second)).second : " << (*(std_iter_p_begin.second)).second << std::endl;
+        std::cout << "[" << __func__ << "] equal_range(-42) err" << std::endl;
+        return (false);
+    }
+
+    ftiterpair ft_iter_p_end = ft_map.equal_range(42);
+    stditerpair std_iter_p_end = std_map.equal_range(42);
+    if ((ft_iter_p_end.first != ft_iter_p_end.second)
+      || (ft_iter_p_end.first != ft_map.end())
+      || (std_iter_p_end.first != std_iter_p_end.second)
+      || (std_iter_p_end.first != std_map.end())) {
+        std::cout << "[" << __func__ << "] equal_range(42) err" << std::endl;
+        return (false);
+    }
+
+    return (true);
+}
+
 #endif

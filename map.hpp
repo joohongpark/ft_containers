@@ -79,7 +79,6 @@ namespace ft {
             iterator                            erase(const_iterator first, const_iterator last);
             void                                clear();
 
-/*
             // map operations:
             size_type                           count(const key_type& k) const;
             iterator                            find(const key_type& k);
@@ -90,7 +89,7 @@ namespace ft {
             const_iterator                      upper_bound(const key_type& k) const;
             pair<iterator,iterator>             equal_range(const key_type& k);
             pair<const_iterator,const_iterator> equal_range(const key_type& k) const;
-*/
+
             // iterators:
             iterator                begin();
             const_iterator          begin() const;
@@ -274,6 +273,140 @@ namespace ft {
     void map<Key, T, Compare, Allocator>::clear() {
         _size = 0;
         _tree.clear();
+    }
+
+    // map operations:
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::size_type map<Key, T, Compare, Allocator>::count(const key_type& k) const {
+        value_type target(k, mapped_type());
+        return (size_type(_tree.have(target)));
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::iterator map<Key, T, Compare, Allocator>::find(const key_type& k) {
+        value_type target(k, mapped_type());
+        if (_tree.have(target)) {
+            return (iterator(_tree.getnode(target)));
+        } else {
+            return (++iterator(_tree.end()));
+        }
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::const_iterator map<Key, T, Compare, Allocator>::find(const key_type& k) const {
+        value_type target(k, mapped_type());
+        if (_tree.have(target)) {
+            return (const_iterator(_tree.getnode(target)));
+        } else {
+            return (++const_iterator(_tree.end()));
+        }
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::iterator map<Key, T, Compare, Allocator>::lower_bound(const key_type& k) {
+        typename tree_type::node_type* node = _tree.begin();
+        typename tree_type::node_type* node_end = _tree.end();
+        while (true) {
+            if (_comp(node->data.first, k) == false) {
+                return (iterator(node));
+            }
+            if (node == node_end) {
+                break;
+            } else {
+                node = tree_type::getnext(node);
+            }
+        }
+
+        return (++iterator(node));
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::const_iterator map<Key, T, Compare, Allocator>::lower_bound(const key_type& k) const {
+        typename tree_type::node_type* node = _tree.begin();
+        typename tree_type::node_type* node_end = _tree.end();
+        while (true) {
+            if (_comp(node->data.first, k) == false) {
+                return (const_iterator(node));
+            }
+            if (node == node_end) {
+                break;
+            } else {
+                node = tree_type::getnext(node);
+            }
+        }
+        return (++const_iterator(node));
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::iterator map<Key, T, Compare, Allocator>::upper_bound(const key_type& k) {
+        typename tree_type::node_type* node = _tree.begin();
+        typename tree_type::node_type* node_end = _tree.end();
+        while (true) {
+            if (_comp(k, node->data.first) == true) {
+                return (iterator(node));
+            }
+            if (node == node_end) {
+                break;
+            } else {
+                node = tree_type::getnext(node);
+            }
+        }
+        return (++iterator(node));
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    typename map<Key, T, Compare, Allocator>::const_iterator map<Key, T, Compare, Allocator>::upper_bound(const key_type& k) const {
+        typename tree_type::node_type* node = _tree.begin();
+        typename tree_type::node_type* node_end = _tree.end();
+        while (true) {
+            if (_comp(k, node->data.first) == true) {
+                return (iterator(node));
+            }
+            if (node == node_end) {
+                break;
+            } else {
+                node = tree_type::getnext(node);
+            }
+        }
+        return (++iterator(node));
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    pair<
+        typename map<Key, T, Compare, Allocator>::iterator,
+        typename map<Key, T, Compare, Allocator>::iterator
+    > map<Key, T, Compare, Allocator>::equal_range(const key_type& k) {
+        value_type target(k, mapped_type());
+        if (_tree.have(target)) {
+            typename tree_type::node_type* node = _tree.getnode(target);
+            return (pair<iterator, iterator>(iterator(node), ++iterator(node)));
+        } else {
+            typename tree_type::node_type* node = _tree.end();
+            if ((node == NULL) || _comp(node->data.first, k) == true) {
+                return (pair<iterator, iterator>(++iterator(node), ++iterator(node)));
+            } else {
+                return (pair<iterator, iterator>(iterator(_tree.begin()), iterator(_tree.begin())));
+            }
+        }
+    }
+
+    template <class Key, class T, class Compare, class Allocator>
+    pair<
+        typename map<Key, T, Compare, Allocator>::const_iterator,
+        typename map<Key, T, Compare, Allocator>::const_iterator
+    > map<Key, T, Compare, Allocator>::equal_range(const key_type& k) const {
+        value_type target(k, mapped_type());
+        if (_tree.have(target)) {
+            typename tree_type::node_type* node = _tree.getnode(target);
+            return (pair<const_iterator, const_iterator>(iterator(node), ++iterator(node)));
+        } else {
+            typename tree_type::node_type* node = _tree.end();
+            if ((node == NULL) || _comp(node->data.first, k) == true) {
+                return (pair<const_iterator, const_iterator>(++const_iterator(node), ++const_iterator(node)));
+            } else {
+                return (pair<const_iterator, const_iterator>(const_iterator(_tree.begin()), const_iterator(_tree.begin())));
+            }
+        }
     }
 
     // iterators:
