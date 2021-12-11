@@ -136,5 +136,17 @@ int main(void) {
 
     std::cout << std::endl;
 
+    // reverse iterator test
+    std::cout << "[reverse iterator test]" << std::endl;
+    ft::vector<int>::reverse_iterator ft_riter = ft_v.rbegin();
+    std::vector<int>::reverse_iterator std_riter = std_v.rbegin();
+    while ((ft_riter != ft_v.rend()) && (std_riter != std_v.rend())) {
+        std::cout << "ft : " << *(ft_riter) << ", std : " << *(std_riter) << std::endl;
+        ft_riter++;
+        std_riter++;
+    }
+    
+
+
     return (0);
 }

@@ -356,22 +356,22 @@ namespace ft {
 
     template <class T, class Allocator>
     typename vector<T, Allocator>::reverse_iterator vector<T, Allocator>::rbegin() {
-        return (reverse_iterator(_data));
+        return (reverse_iterator(end()));
     }
 
     template <class T, class Allocator>
     typename vector<T, Allocator>::const_reverse_iterator vector<T, Allocator>::rbegin() const{
-        return (const_reverse_iterator(_data));
+        return (const_reverse_iterator(end()));
     }
 
     template <class T, class Allocator>
     typename vector<T, Allocator>::reverse_iterator vector<T, Allocator>::rend(){
-        return (reverse_iterator(&_data[_size]));
+        return (reverse_iterator(begin()));
     }
 
     template <class T, class Allocator>
     typename vector<T, Allocator>::const_reverse_iterator vector<T, Allocator>::rend() const{
-        return (const_reverse_iterator(&_data[_size]));
+        return (const_reverse_iterator(begin()));
     }
 
     template <class T, class Allocator>
