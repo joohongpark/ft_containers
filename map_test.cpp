@@ -51,5 +51,10 @@ int main(void) {
     } else {
         std::cout << "bound_method_tester() OK" << std::endl;
     }
+    if (operator_method_tester() != true) {
+        std::cout << "Error" << std::endl;
+    } else {
+        std::cout << "bound_method_tester() OK" << std::endl;
+    }
     return (0);
 }

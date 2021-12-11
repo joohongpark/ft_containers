@@ -91,7 +91,9 @@ class AVLTree {
         // for iterator
         size_type           max_size() const;
         node_type*          begin();
+        node_type*          cbegin() const;
         node_type*          end();
+        node_type*          cend() const;
     private:
         long        getbf(node_type* node);
         int         nodetype(node_type* parent, node_type* node, node_type* child);
@@ -363,8 +365,34 @@ typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Alloca
 }
 
 template <class Tp, class Compare, class Allocator>
+typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Allocator>::cbegin() const {
+    node_type* pointer = this->root;
+    while (pointer != NULL) {
+        if (pointer->leftleaf != NULL) {
+            pointer = pointer->leftleaf;
+        } else {
+            return (pointer);
+        }
+    }
+    return (NULL);
+}
+
+template <class Tp, class Compare, class Allocator>
 typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Allocator>::end() {
     return (getmax(this->root));
+}
+
+template <class Tp, class Compare, class Allocator>
+typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Allocator>::cend() const {
+    node_type* pointer = this->root;
+    while (pointer != NULL) {
+        if (pointer->rightleaf != NULL) {
+            pointer = pointer->rightleaf;
+        } else {
+            return (pointer);
+        }
+    }
+    return (NULL);
 }
 
 template <class Tp, class Compare, class Allocator>

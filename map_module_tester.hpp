@@ -377,4 +377,48 @@ bool equal_method_tester() {
     return (true);
 }
 
+bool operator_method_tester() {
+    ft::map<int, char> ft_map;
+    ft::map<int, char> ft_map_1;
+    std::map<int, char> std_map;
+    std::map<int, char> std_map_1;
+
+    for (int i = 0; i < 15; i++) {
+        ft_map[i] = char('a' + i);
+        std_map[i] = char('a' + i);
+        ft_map_1[i] = char('a' + i);
+        std_map_1[i] = char('a' + i);
+    }
+
+    if (!(ft_map == ft_map_1) || !(std_map == std_map_1)) {
+        std::cout << "[" << __func__ << "] operator==() err" << std::endl;
+        return (false);
+    }
+
+    ft_map_1[10] = 'a';
+    std_map_1[10] = 'a';
+    if ((ft_map == ft_map_1) != (std_map == std_map_1)) {
+        std::cout << "[" << __func__ << "] !operator==() err" << std::endl;
+        std::cout << "(ft_map == ft_map_1) : " << (ft_map == ft_map_1) << std::endl;
+        std::cout << "(std_map == std_map_1) : " << (std_map == std_map_1) << std::endl;
+        return (false);
+    }
+
+    if ((ft_map < ft_map_1) != (std_map < std_map_1)) {
+        std::cout << "[" << __func__ << "] !operator< () err" << std::endl;
+        std::cout << "(ft_map < ft_map_1) : " << (ft_map < ft_map_1) << std::endl;
+        std::cout << "(std_map < std_map_1) : " << (std_map < std_map_1) << std::endl;
+        return (false);
+    }
+
+    if ((ft_map > ft_map_1) != (std_map > std_map_1)) {
+        std::cout << "[" << __func__ << "] !operator> () err" << std::endl;
+        std::cout << "(ft_map > ft_map_1) : " << (ft_map > ft_map_1) << std::endl;
+        std::cout << "(std_map > std_map_1) : " << (std_map > std_map_1) << std::endl;
+        return (false);
+    }
+
+    return (true);
+}
+
 #endif
