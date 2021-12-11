@@ -3,6 +3,11 @@
 #include "map_module_tester.hpp"
 
 int main(void) {
+    if(insert_big_size_tester() != true) {
+        std::cout << "Error" << std::endl;
+    } else {
+        std::cout << "insert_big_size_tester() OK" << std::endl;
+    }
     if((insert_value_method_tester(0, "문자열") != true)
     || insert_value_method_tester(1000, "문자열") != true) {
         std::cout << "Error" << std::endl;

@@ -139,14 +139,10 @@ namespace ft {
         return (!(y < x));
     }
 
-/*
-    // specialized algorithms:
     template <class Key, class T, class Compare, class Allocator>
-    void
-    swap(map<Key, T, Compare, Allocator>& x, map<Key, T, Compare, Allocator>& y) {
+    void swap(map<Key, T, Compare, Allocator>& x, map<Key, T, Compare, Allocator>& y) {
         x.swap(y);
     }
-*/
 }
 
 namespace ft {
@@ -218,14 +214,14 @@ namespace ft {
     template <class Key, class T, class Compare, class Allocator>
     pair<typename map<Key, T, Compare, Allocator>::iterator, bool> map<Key, T, Compare, Allocator>::insert(const value_type& v) {
         pair<iterator, bool> rtn;
-        value_type* new_val = _tree.insert(v);
-        rtn.first = iterator(_tree.getnode(v));
-        if (new_val != NULL) {
+        if (_tree.have(v)) {
+            rtn.second = false;
+        } else {
+            _tree.insert(v);
             _size++;
             rtn.second = true;
-        } else {
-            rtn.second = false;
         }
+        rtn.first = iterator(_tree.getnode(v));
         return (rtn);
     }
 
@@ -251,7 +247,6 @@ namespace ft {
 
     template <class Key, class T, class Compare, class Allocator>
     typename map<Key, T, Compare, Allocator>::iterator map<Key, T, Compare, Allocator>::erase(const_iterator position) {
-        // FIXME: 개선 필요
         value_type v(*position);
         iterator rtn(_tree.getnode(v));
         rtn++;

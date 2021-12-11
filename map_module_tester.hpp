@@ -7,6 +7,47 @@
 #include <map>
 #include "vector.hpp"
 #include <vector>
+#include <stdlib.h>
+
+bool insert_big_size_tester() {
+    int size = 1047552;
+	srand(size);
+    ft::map<int, int> ft_map;
+    std::map<int, int> std_map;
+
+    for (int i = 0; i < size; i++) {
+        int rk = rand();
+        int rv = rand();
+		ft_map.insert(ft::make_pair(rk, rv));
+		std_map.insert(std::make_pair(rk, rv));
+        if ((ft_map.find(rk) == ft_map.end())
+          || (std_map.find(rk) == std_map.end())) {
+            std::cout << "[" << __func__ << "]" << std::endl;
+            std::cout << "key is not inserted : " << std::endl;
+            return (false);
+        }
+    }
+    if ((ft_map.size() != std_map.size())) {
+        std::cout << "[" << __func__ << "]" << std::endl;
+        std::cout << "ft_map.size() : " << ft_map.size() << std::endl;
+        std::cout << "std_map.size() : " << std_map.size() << std::endl;
+        return (false);
+    }
+	int ft_sum = 0;
+	int std_sum = 0;
+	for (int i = 0; i < 10000; i++) {
+		int access = rand();
+		ft_sum += ft_map[access];
+		std_sum += std_map[access];
+	}
+    if ((ft_sum != std_sum)) {
+        std::cout << "[" << __func__ << "]" << std::endl;
+        std::cout << "ft_sum : " << ft_sum << std::endl;
+        std::cout << "std_sum : " << std_sum << std::endl;
+        return (false);
+    }
+    return (true);
+}
 
 bool insert_value_method_tester(int n, std::string str) {
     typedef ft::map<int, std::string>::iterator ftiter;

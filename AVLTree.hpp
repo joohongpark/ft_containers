@@ -20,13 +20,19 @@ class AVLTree {
                 this->rightleaf = NULL;
                 this->height = 0;
             }
-            static void swap(Node* a, Node* b) {
+            static void node_swap(Node* a, Node* b) {
                 long height_tmp = a->height;
                 a->height = b->height;
                 b->height = height_tmp;
                 Node* parent_tmp = a->parent;
                 a->parent = b->parent;
                 b->parent = parent_tmp;
+                Node* leftleaf_tmp = a->leftleaf;
+                a->leftleaf = b->leftleaf;
+                b->leftleaf = leftleaf_tmp;
+                Node* rightleaf_tmp = a->rightleaf;
+                a->rightleaf = b->rightleaf;
+                b->rightleaf = rightleaf_tmp;
                 if (a->parent != NULL) {
                     if (a->parent->leftleaf == b) {
                         a->parent->leftleaf = a;
@@ -41,18 +47,12 @@ class AVLTree {
                         b->parent->rightleaf = b;
                     }
                 }
-                Node* leftleaf_tmp = a->leftleaf;
-                a->leftleaf = b->leftleaf;
-                b->leftleaf = leftleaf_tmp;
                 if (a->leftleaf != NULL) {
                     a->leftleaf->parent = a;
                 }
                 if (b->leftleaf != NULL) {
                     b->leftleaf->parent = b;
                 }
-                Node* rightleaf_tmp = a->rightleaf;
-                a->rightleaf = b->rightleaf;
-                b->rightleaf = rightleaf_tmp;
                 if (a->rightleaf != NULL) {
                     a->rightleaf->parent = a;
                 }
@@ -61,45 +61,53 @@ class AVLTree {
                 }
             }
         };
+
     public:
         typedef Node<Tp>                                                            node_type;
         typedef Allocator                                                           origin_allocator_type;
         typedef typename origin_allocator_type::template rebind<node_type>::other   node_allocator_type; // http://egloos.zum.com/sweeper/v/2966785
         typedef Compare                                                             value_compare;
         typedef typename node_allocator_type::size_type                             size_type;
+
     private:
         node_allocator_type                                                         alloc;
         value_compare                                                               comp;
         node_type*                                                                  root;
+
     public:
         // construct/copy/destroy/operator:
         AVLTree();
         AVLTree(const AVLTree& avltree);
         ~AVLTree();
         AVLTree&            operator=(const AVLTree& avltree);
-        // Tree 필수 메소드
-        Tp*                 insert(const Tp& val);
-        bool                have(Tp& val) const; // 객체 멤버변수가 변하지 않음을 보증
-        Tp*                 find(Tp& val); // NOTE: 없으면 NULL
-        bool                delval(Tp& val);
-        node_type*          getnode(const Tp& val);
-        static node_type*   getmin(node_type* pointer);
-        static node_type*   getmax(node_type* pointer);
-        static node_type*   getprev(node_type* pointer);
-        static node_type*   getnext(node_type* pointer);
+    
+        // Tree 필수 메소드 (레퍼런스로 받으면 테스트 시 인수에 리터럴을 못넣지만 map 내에서 호출할 때를 위함)
+        Tp*                 insert(const Tp& val);          // 값 삽입 (이미 존재하면 NULL 반환)
+        bool                have(const Tp& val) const;      // 값 존재유무 확인 (객체 멤버변수가 변하지 않음을 보증)
+        Tp*                 find(const Tp& val);            // 값 탐색 (존재하지 않으면 NULL 반환)
+        bool                delval(Tp& val);                // 값 삭제 (값이 존재해서 삭제되면 true 반환)
         void                clear();
+
         // for iterator
-        size_type           max_size() const;
-        node_type*          begin();
-        node_type*          cbegin() const;
-        node_type*          end();
-        node_type*          cend() const;
+        node_type*          getnode(const Tp& val);         // 값을 가지고 있는 노드 반환
+        static node_type*   getmin(node_type* pointer);     // 최소값 노드 반환
+        static node_type*   getmax(node_type* pointer);     // 최대값 노드 반환
+        static node_type*   getprev(node_type* pointer);    // 인수로 주어진 노드에서 다음 노드 반환
+        static node_type*   getnext(node_type* pointer);    // 인수로 주어진 노드에서 이전 노드 반환
+        node_type*          begin();                        // 트리의 최소값 노드 반환
+        node_type*          cbegin() const;                 // 트리의 최소값 노드 반환 (const)
+        node_type*          end();                          // 트리의 최대값 노드 반환
+        node_type*          cend() const;                   // 트리의 최대값 노드 반환 (const)
+
+        // etc
+        size_type           max_size() const;               // 할당자의 max_size 리턴
+    
     private:
-        long        getbf(node_type* node);
-        int         nodetype(node_type* parent, node_type* node, node_type* child);
-        void        rewind(node_type* node);
-        void        leftrotate(node_type* node);
-        void        rightrotate(node_type* node);
+        long                getbf(node_type* node);
+        int                 nodetype(node_type* parent, node_type* node, node_type* child);
+        void                rewind(node_type* node);
+        void                leftrotate(node_type* node);
+        void                rightrotate(node_type* node);
     public:
         void __debug(long depth = 0, node_type* pointer = NULL) {
             if (pointer == NULL) {
@@ -153,15 +161,15 @@ Tp* AVLTree<Tp, Compare, Allocator>::insert(const Tp& val) {
         if (pointer == NULL) {
             this->root = alloc.allocate(1);
             alloc.construct(this->root, val, static_cast<node_type *>(NULL));
-            rewind(pointer);
             rtn = &(this->root->data);
+            rewind(pointer);
             break ;
         } else if (comp(val, pointer->data)) {
             if (pointer->leftleaf == NULL) {
                 pointer->leftleaf = alloc.allocate(1);
                 alloc.construct(pointer->leftleaf, val, pointer);
-                rewind(pointer->leftleaf);
                 rtn = &(pointer->leftleaf->data);
+                rewind(pointer->leftleaf);
                 break ;
             } else {
                 pointer = pointer->leftleaf;
@@ -170,8 +178,8 @@ Tp* AVLTree<Tp, Compare, Allocator>::insert(const Tp& val) {
             if (pointer->rightleaf == NULL) {
                 pointer->rightleaf = alloc.allocate(1);
                 alloc.construct(pointer->rightleaf, val, pointer);
-                rewind(pointer->rightleaf);
                 rtn = &(pointer->rightleaf->data);
+                rewind(pointer->rightleaf);
                 break ;
             } else {
                 pointer = pointer->rightleaf;
@@ -301,7 +309,7 @@ void AVLTree<Tp, Compare, Allocator>::clear() {
 }
 
 template <class Tp, class Compare, class Allocator>
-bool AVLTree<Tp, Compare, Allocator>::have(Tp& val) const {
+bool AVLTree<Tp, Compare, Allocator>::have(const Tp& val) const {
     bool rtn = false;
     node_type* pointer = this->root;
     while (true) {
@@ -328,7 +336,7 @@ bool AVLTree<Tp, Compare, Allocator>::have(Tp& val) const {
 }
 
 template <class Tp, class Compare, class Allocator>
-Tp* AVLTree<Tp, Compare, Allocator>::find(Tp& val) {
+Tp* AVLTree<Tp, Compare, Allocator>::find(const Tp& val) {
     Tp* rtn = NULL;
     node_type* pointer = this->root;
     while (true) {
@@ -409,7 +417,7 @@ bool AVLTree<Tp, Compare, Allocator>::delval(Tp& val) {
         } else {
             rtn = true;
             if (target != NULL) {
-                node_type::swap(target, pointer);
+                node_type::node_swap(target, pointer);
                 pointer = target;
             }
             if (pointer->leftleaf == NULL && pointer->rightleaf == NULL) {
@@ -563,9 +571,7 @@ void AVLTree<Tp, Compare, Allocator>::rewind(node_type* node) {
 template <class Tp, class Compare, class Allocator>
 void AVLTree<Tp, Compare, Allocator>::leftrotate(node_type* node) {
     node_type* up = node->rightleaf;
-    node_type* a = up->leftleaf; // NULL일수도 있음
-
-    // 1. up - p 연결
+    node_type* a = up->leftleaf;
     if (node->parent == NULL) {
         this->root = up;
         up->parent = NULL;
@@ -577,12 +583,8 @@ void AVLTree<Tp, Compare, Allocator>::leftrotate(node_type* node) {
         }
         up->parent = node->parent;
     }
-
-    // 2. up의 오른쪽노드를 a에서 node로 변경
     up->leftleaf = node;
     node->parent = up;
-
-    // 3. node의 왼쪽 노드를 A로
     node->rightleaf = a;
     if (a != NULL) {
         a->parent = node;
@@ -592,9 +594,7 @@ void AVLTree<Tp, Compare, Allocator>::leftrotate(node_type* node) {
 template <class Tp, class Compare, class Allocator>
 void AVLTree<Tp, Compare, Allocator>::rightrotate(node_type* node) {
     node_type* up = node->leftleaf;
-    node_type* a = up->rightleaf; // NULL일수도 있음
-
-    // 1. up - p 연결
+    node_type* a = up->rightleaf;
     if (node->parent == NULL) {
         this->root = up;
         up->parent = NULL;
@@ -606,12 +606,8 @@ void AVLTree<Tp, Compare, Allocator>::rightrotate(node_type* node) {
         }
         up->parent = node->parent;
     }
-
-    // 2. up의 오른쪽노드를 a에서 node로 변경
     up->rightleaf = node;
     node->parent = up;
-
-    // 3. node의 왼쪽 노드를 A로
     node->leftleaf = a;
     if (a != NULL) {
         a->parent = node;

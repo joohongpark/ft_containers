@@ -2,6 +2,7 @@
 #define VECTOR_HPP
 
 #include <memory>
+#include <stdexcept>
 
 #include "vector_iterator.hpp"
 #include "reverse_iterator.hpp"
@@ -176,11 +177,17 @@ namespace ft {
 
     template <class T, class Allocator>
     typename vector<T, Allocator>::reference vector<T, Allocator>::operator[](size_type __n) {
+        if (_size <= __n) {
+            throw std::out_of_range("ft::vector::at()");
+        }
         return (_data[__n]);
     }
 
     template <class T, class Allocator>
     typename vector<T, Allocator>::const_reference vector<T, Allocator>::operator[](size_type __n) const {
+        if (_size <= __n) {
+            throw std::out_of_range("ft::vector::at()");
+        }
         return (_data[__n]);
     }
 
@@ -192,7 +199,6 @@ namespace ft {
 
     template <class T, class Allocator>
     typename vector<T, Allocator>::size_type vector<T, Allocator>::max_size() const {
-        // FIXME: 조건 추가 필요할 듯 2021-10-06
         return (_alloc.max_size());
     }
 
@@ -237,13 +243,17 @@ namespace ft {
     // Methods (access)
     template <class T, class Allocator>
     typename vector<T, Allocator>::reference vector<T, Allocator>::at(size_type n) {
-        // FIXME: 에러 핸들링 필요한지 확인 필요 2021-10-06
+        if (_size <= n) {
+            throw std::out_of_range("ft::vector::at()");
+        }
         return (_data[n]);
     }
 
     template <class T, class Allocator>
     typename vector<T, Allocator>::const_reference vector<T, Allocator>::at(size_type n) const {
-        // FIXME: 에러 핸들링 필요한지 확인 필요 2021-10-06
+        if (_size <= n) {
+            throw std::out_of_range("ft::vector::at()");
+        }
         return (_data[n]);
     }
 
@@ -297,7 +307,7 @@ namespace ft {
         size_type _size_tmp = x._size;
         size_type _capacity_tmp = x._capacity;
         allocator_type _alloc_tmp = x._alloc;
-        x.data = this->_data;
+        x._data = this->_data;
         x._size = this->_size;
         x._capacity = this->_capacity;
         x._alloc = this->_alloc;
