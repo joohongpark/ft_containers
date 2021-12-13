@@ -73,7 +73,7 @@ namespace ft {
             pair<iterator, bool>                insert(const value_type& v);
             iterator                            insert(const_iterator position, const value_type& v);
             template <class InputIterator>
-            void                                insert(InputIterator first, typename enable_if<std::is_convertible<InputIterator, std::input_iterator_tag>::value, InputIterator>::type last);
+            void                                insert(InputIterator first, typename enable_if<std::is_convertible<typename InputIterator::iterator_category, std::input_iterator_tag>::value, InputIterator>::type last);
             iterator                            erase(const_iterator position);
             size_type                           erase(const key_type& k);
             iterator                            erase(const_iterator first, const_iterator last);
@@ -238,7 +238,7 @@ namespace ft {
 
     template <class Key, class T, class Compare, class Allocator>
     template <class InputIterator>
-    void map<Key, T, Compare, Allocator>::insert(InputIterator first, typename enable_if<std::is_convertible<InputIterator, std::input_iterator_tag>::value, InputIterator>::type last) {
+    void map<Key, T, Compare, Allocator>::insert(InputIterator first, typename enable_if<std::is_convertible<typename InputIterator::iterator_category, std::input_iterator_tag>::value, InputIterator>::type last) {
         while (first != last) {
             _size++;
             _tree.insert(*first);
