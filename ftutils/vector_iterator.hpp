@@ -1,8 +1,7 @@
 #ifndef VECTOR_ITERATOR_HPP
 #define VECTOR_ITERATOR_HPP
 
-#include "iterator_traits.hpp"
-#include "type_traits.hpp"
+#include <iterator_traits.hpp>
 
 namespace ft {
     template <class T>
@@ -20,7 +19,7 @@ namespace ft {
             vector_iterator();
             vector_iterator(const iterator_type& x) : iter(x) {}
             template <class Type> // NOTE: 이터레이터 클래스에는 복사 생성자가 들어가야 하며 인수는 상수형 타입이 들어가면 안됨 (왜 그런지 아직 모름)
-            vector_iterator(const vector_iterator<Type>& i, typename enable_if<!is_const<Type>::value>::type* = 0) : iter(i.base()) {}
+            vector_iterator(const vector_iterator<Type>& i, typename enable_if<!std::is_const<Type>::value>::type* = 0) : iter(i.base()) {}
             //vector_iterator(const vector_iterator<Type>& i, typename enable_if<std::is_convertible<_Up, iterator_type>::value>::type* = 0) : iter(i.base()) {}
 
             reference           operator*() const {

@@ -1,22 +1,25 @@
 #ifndef MAP_ITERATOR_HPP
 #define MAP_ITERATOR_HPP
 
-#include "iterator_traits.hpp"
-#include "type_traits.hpp"
+#include <type_traits>
 #include <iostream>
+
+#include <enable_if.hpp>
+#include <choose_type.hpp>
+#include <iterator_traits.hpp>
 
 namespace ft {
     template <class T>
     class map_iterator {
         public:
-            typedef typename remove_const<T>::type                                                      tree;
-            typedef typename tree::node_type::value_type                                                data;
-            typedef typename tree::node_type*                                                           iterator_type;
-            typedef bidirectional_iterator_tag                                                          iterator_category;
-            typedef typename iterator_traits<data*>::value_type                                         value_type;
-            typedef typename iterator_traits<data*>::difference_type                                    difference_type;
-            typedef typename iterator_traits<data*>::pointer                                            pointer;
-            typedef typename choose_type<is_const<T>::value, const value_type&, value_type&>::type      reference; // #NOTE map의 iterator / const_iterator 차이점이 이거밖에 없는듯
+            typedef typename std::remove_const<T>::type                                                         tree;
+            typedef typename tree::node_type::value_type                                                        data;
+            typedef typename tree::node_type*                                                                   iterator_type;
+            typedef std::bidirectional_iterator_tag                                                             iterator_category;
+            typedef typename iterator_traits<data*>::value_type                                                 value_type;
+            typedef typename iterator_traits<data*>::difference_type                                            difference_type;
+            typedef typename iterator_traits<data*>::pointer                                                    pointer;
+            typedef typename ft::choose_type<std::is_const<T>::value, const value_type&, value_type&>::type     reference; // #NOTE map의 iterator / const_iterator 차이점이 이거밖에 없는듯
         private:
             iterator_type iter;
             bool is_end; // #NOTE: 트리 구조에서 실제로 존재하지 않는 end() 이터레이터를 표현하기 위한 플래그
@@ -24,7 +27,7 @@ namespace ft {
             map_iterator() : iter(NULL), is_end(true) {};
             map_iterator(const iterator_type& x) : iter(x), is_end(false) {};
             template <class Type> // #NOTE: 이게 있어야 const_iterator까지 커버됨. 왜그런지는 아직 잘 모름
-            map_iterator(const map_iterator<Type>& i, typename enable_if<!is_const<Type>::value>::type* = 0) : iter(i.base()) {}
+            map_iterator(const map_iterator<Type>& i, typename ft::enable_if<!std::is_const<Type>::value>::type* = 0) : iter(i.base()) {}
 
             reference operator*() const {
                 return (iter->data);
