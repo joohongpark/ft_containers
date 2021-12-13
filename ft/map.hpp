@@ -10,6 +10,7 @@
 #include <reverse_iterator.hpp>
 #include <equal.hpp>
 #include <lexicographical_compare.hpp>
+#include <itercheck.hpp>
 
 namespace ft {
     template <
@@ -50,9 +51,6 @@ namespace ft {
             key_compare                                             _comp;
 
         public:
-            void debug() {
-                _tree.__debug();
-            }
             // construct/copy/destroy:
             explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
             template <class InputIterator>
@@ -60,6 +58,7 @@ namespace ft {
                 const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
             map(const map& m);
             ~map();
+
             // operator overloading:
             map&                                operator=(const map& m);
             mapped_type&                        operator[](const key_type& k);
@@ -73,7 +72,7 @@ namespace ft {
             pair<iterator, bool>                insert(const value_type& v);
             iterator                            insert(const_iterator position, const value_type& v);
             template <class InputIterator>
-            void                                insert(InputIterator first, typename enable_if<std::is_convertible<typename InputIterator::iterator_category, std::input_iterator_tag>::value, InputIterator>::type last);
+            void                                insert(InputIterator first, typename ft::itercheck<InputIterator, std::input_iterator_tag>::type last);
             iterator                            erase(const_iterator position);
             size_type                           erase(const key_type& k);
             iterator                            erase(const_iterator first, const_iterator last);
@@ -238,7 +237,7 @@ namespace ft {
 
     template <class Key, class T, class Compare, class Allocator>
     template <class InputIterator>
-    void map<Key, T, Compare, Allocator>::insert(InputIterator first, typename enable_if<std::is_convertible<typename InputIterator::iterator_category, std::input_iterator_tag>::value, InputIterator>::type last) {
+    void map<Key, T, Compare, Allocator>::insert(InputIterator first, typename ft::itercheck<InputIterator, std::input_iterator_tag>::type last) {
         while (first != last) {
             _size++;
             _tree.insert(*first);

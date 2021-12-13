@@ -19,14 +19,14 @@ namespace ft {
             typedef typename iterator_traits<data*>::value_type                                                 value_type;
             typedef typename iterator_traits<data*>::difference_type                                            difference_type;
             typedef typename iterator_traits<data*>::pointer                                                    pointer;
-            typedef typename ft::choose_type<std::is_const<T>::value, const value_type&, value_type&>::type     reference; // #NOTE map의 iterator / const_iterator 차이점이 이거밖에 없는듯
+            typedef typename ft::choose_type<std::is_const<T>::value, const value_type&, value_type&>::type     reference;
         private:
             iterator_type iter;
             bool is_end; // #NOTE: 트리 구조에서 실제로 존재하지 않는 end() 이터레이터를 표현하기 위한 플래그
         public:
             map_iterator() : iter(NULL), is_end(true) {};
             map_iterator(const iterator_type& x) : iter(x), is_end(false) {};
-            template <class Type> // #NOTE: 이게 있어야 const_iterator까지 커버됨. 왜그런지는 아직 잘 모름
+            template <class Type>
             map_iterator(const map_iterator<Type>& i, typename ft::enable_if<!std::is_const<Type>::value>::type* = 0) : iter(i.base()) {}
 
             reference operator*() const {

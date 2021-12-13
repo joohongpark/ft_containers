@@ -1,8 +1,8 @@
 #ifndef AVLTREE_HPP
 #define AVLTREE_HPP
 
-#include <iostream> // FIXME: 추후 제거
 #include <memory>
+
 namespace ft {
     template <class Tp, class Compare, class Allocator = std::allocator<Tp> >
     class AVLTree {
@@ -65,7 +65,7 @@ namespace ft {
         public:
             typedef Node<Tp>                                                            node_type;
             typedef Allocator                                                           origin_allocator_type;
-            typedef typename origin_allocator_type::template rebind<node_type>::other   node_allocator_type; // http://egloos.zum.com/sweeper/v/2966785
+            typedef typename origin_allocator_type::template rebind<node_type>::other   node_allocator_type;
             typedef Compare                                                             value_compare;
             typedef typename node_allocator_type::size_type                             size_type;
 
@@ -108,22 +108,6 @@ namespace ft {
             void                rewind(node_type* node);
             void                leftrotate(node_type* node);
             void                rightrotate(node_type* node);
-        public:
-            void __debug(long depth = 0, node_type* pointer = NULL) {
-                if (pointer == NULL) {
-                    pointer = this->root;
-                }
-                if (pointer->rightleaf != NULL) {
-                    __debug(depth + 1, pointer->rightleaf);
-                }
-                for (long i = 0; i < depth; i++) {
-                    std::cout << " ";
-                }
-                std::cout << pointer->data.first << " [" << pointer->data.second << "]" << std::endl;
-                if (pointer->leftleaf != NULL) {
-                    __debug(depth + 1, pointer->leftleaf);
-                }
-            }
     };
 
     template <class Tp, class Compare, class Allocator>

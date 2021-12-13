@@ -8,6 +8,7 @@
 #include <reverse_iterator.hpp>
 #include <equal.hpp>
 #include <lexicographical_compare.hpp>
+#include <itercheck.hpp>
 
 namespace ft {
     template <class T, class Allocator = std::allocator<T> >
@@ -37,7 +38,7 @@ namespace ft {
             vector(size_type n, const value_type& val);
             // 라이브러리엔 입력 반복자이고 정방향 반복자가 아닐때에 대한 오버로딩도 존재함.
             template <class InputIterator>
-            vector(InputIterator first, typename enable_if<std::is_convertible<typename InputIterator::iterator_category, std::input_iterator_tag>::value, InputIterator>::type last);
+            vector(InputIterator first, typename ft::itercheck<InputIterator, std::input_iterator_tag>::type last);
             vector(const vector& x);
 
             // destructor
@@ -70,7 +71,7 @@ namespace ft {
 
             // Methods (other)
             template <class InputIterator>
-            void            assign(InputIterator first, typename enable_if<std::is_convertible<typename InputIterator::iterator_category, std::input_iterator_tag>::value, InputIterator>::type last);
+            void            assign(InputIterator first, typename ft::itercheck<InputIterator, std::input_iterator_tag>::type last);
             void            assign(size_type n, const value_type& u);
             allocator_type  get_allocator() const;
 
@@ -88,7 +89,7 @@ namespace ft {
             iterator                insert(const_iterator position, const value_type& x);
             iterator                insert(const_iterator position, size_type n, const value_type& x);
             template <class InputIterator>
-            iterator                insert(const_iterator position, InputIterator first, typename enable_if<std::is_convertible<typename InputIterator::iterator_category, std::input_iterator_tag>::value, InputIterator>::type last);
+            iterator                insert(const_iterator position, InputIterator first, typename ft::itercheck<InputIterator, std::input_iterator_tag>::type last);
 
         private:
             // Methods (Private)
@@ -116,8 +117,7 @@ namespace ft {
 
     template <class T, class Allocator>
     template <class InputIterator>
-    // TODO: 이터레이터 상태에 따라 검증 해야 할 듯
-    vector<T, Allocator>::vector(InputIterator first, typename enable_if<std::is_convertible<typename InputIterator::iterator_category, std::input_iterator_tag>::value, InputIterator>::type last) {
+    vector<T, Allocator>::vector(InputIterator first, typename ft::itercheck<InputIterator, std::input_iterator_tag>::type last) {
         _size = 0;
         _capacity = 0;
         _data = NULL;
@@ -318,7 +318,7 @@ namespace ft {
 
     template <class T, class Allocator>
     template <class InputIterator>
-    void vector<T, Allocator>::assign(InputIterator first, typename enable_if<std::is_convertible<typename InputIterator::iterator_category, std::input_iterator_tag>::value, InputIterator>::type last) {
+    void vector<T, Allocator>::assign(InputIterator first, typename ft::itercheck<InputIterator, std::input_iterator_tag>::type last) {
         clear();
         for (; first != last; ++first) {
             push_back(*first);
@@ -429,7 +429,7 @@ namespace ft {
 
     template <class T, class Allocator>
     template <class InputIterator>
-    typename vector<T, Allocator>::iterator vector<T, Allocator>::insert(const_iterator position, InputIterator first, typename enable_if<std::is_convertible<typename InputIterator::iterator_category, std::input_iterator_tag>::value, InputIterator>::type last) {
+    typename vector<T, Allocator>::iterator vector<T, Allocator>::insert(const_iterator position, InputIterator first, typename ft::itercheck<InputIterator, std::input_iterator_tag>::type last) {
         vector new_data(first, last);
         size_type new_data_len = new_data.size();
         if ((_size + new_data_len) > _capacity) {
