@@ -109,7 +109,9 @@ namespace ft {
             void                leftrotate(node_type* node);
             void                rightrotate(node_type* node);
     };
+}
 
+namespace ft {
     template <class Tp, class Compare, class Allocator>
     AVLTree<Tp, Compare, Allocator>::AVLTree() : alloc(), comp(), root(NULL) {}
 

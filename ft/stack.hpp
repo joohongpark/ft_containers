@@ -4,7 +4,6 @@
 #include "vector.hpp"
 
 namespace ft {
-
     template <class T, class Container = ft::vector<T> >
     class stack {
         public:
@@ -29,7 +28,9 @@ namespace ft {
             void                                            push(const value_type& x);
             void                                            pop();
     };
+}
 
+namespace ft {
     template <class T, class Container>
     stack<T, Container>::stack(const container_type& cont) : c(cont) {}
 

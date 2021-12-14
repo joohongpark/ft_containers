@@ -85,7 +85,9 @@ namespace ft {
                 return (*(*this + n));
             }
     };
+}
 
+namespace ft {
     template <class Iterator1, class Iterator2>
     bool operator==(const reverse_iterator<Iterator1>& x, const reverse_iterator<Iterator2>& y) {
         return (x.base() == y.base());

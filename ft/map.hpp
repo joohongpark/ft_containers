@@ -5,6 +5,7 @@
 #include <functional>
 
 #include <pair.hpp>
+#include <make_pair.hpp>
 #include <AVLTree.hpp>
 #include <map_iterator.hpp>
 #include <reverse_iterator.hpp>

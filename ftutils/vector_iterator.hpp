@@ -68,31 +68,10 @@ namespace ft {
             iterator_type       base() const {
                 return (iter);
             }
-
-            // TODO: 누락된 연산자 및 함수 추가 (조치 필요)
-            template <class T1, class T2> friend
-            bool operator==(const vector_iterator<T1>&, const vector_iterator<T2>&);
-            template <class T1, class T2> friend
-            bool operator<(const vector_iterator<T1>&, const vector_iterator<T2>&);
-            template <class T1, class T2> friend
-            bool operator!=(const vector_iterator<T1>&, const vector_iterator<T2>&);
-            template <class T1, class T2> friend
-            bool operator>(const vector_iterator<T1>&, const vector_iterator<T2>&);
-            template <class T1, class T2> friend
-            bool operator>=(const vector_iterator<T1>&, const vector_iterator<T2>&);
-            template <class T1, class T2> friend
-            bool operator<=(const vector_iterator<T1>&, const vector_iterator<T2>&);
-
-            template <class T1, class T2> friend
-            typename vector_iterator<T1>::difference_type operator-(const vector_iterator<T1>& x, const vector_iterator<T2>& y) {
-                return (x.base() - y.base());
-            }
-            template <class T1> friend
-            vector_iterator<T1> operator+(typename vector_iterator<T1>::difference_type x, vector_iterator<T1> y) {
-                x += y;
-                return (x);
-            }
     };
+}
+
+namespace ft {
     template <class T1, class T2>
     bool operator==(const vector_iterator<T1>& x, const vector_iterator<T2>& y) { return bool(x.base() == y.base()); }
     template <class T>

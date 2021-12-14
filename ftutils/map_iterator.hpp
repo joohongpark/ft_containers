@@ -22,7 +22,7 @@ namespace ft {
             typedef typename ft::choose_type<std::is_const<T>::value, const value_type&, value_type&>::type     reference;
         private:
             iterator_type iter;
-            bool is_end; // #NOTE: 트리 구조에서 실제로 존재하지 않는 end() 이터레이터를 표현하기 위한 플래그
+            bool is_end;
         public:
             map_iterator() : iter(NULL), is_end(true) {};
             map_iterator(const iterator_type& x) : iter(x), is_end(false) {};
@@ -82,6 +82,9 @@ namespace ft {
                 return (is_end);
             }
     };
+}
+
+namespace ft {
     template <class T1, class T2>
     bool operator==(const map_iterator<T1>& x, const map_iterator<T2>& y) { return bool((x.base() == y.base()) && (x.end_check() == y.end_check())); }
     template <class T>

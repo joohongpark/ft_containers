@@ -6,7 +6,7 @@
 #    By: joopark <joopark@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/23 09:21:36 by joopark           #+#    #+#              #
-#    Updated: 2021/12/13 22:47:00 by joopark          ###   ########.fr        #
+#    Updated: 2021/12/13 22:55:43 by joopark          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,7 @@ clean:
 	rm -f $(OBJS_NAME_42TESTER) $(OBJS_NAME_TESTER)
 
 fclean: clean
-	rm -f $(NAME_42TESTER) $(OBJS_NAME_TESTER)
+	rm -f $(NAME_42TESTER) $(NAME_TESTER)
 
 %.o: %.cpp
 	$(COMPILER) ${CFLAGS} -I${HEADER_CONTAINER} -I${HEADER_UTILS} -I${HEADER_REIMPLEMENT} -c -o $@ $<
