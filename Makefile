@@ -6,7 +6,7 @@
 #    By: joopark <joopark@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/23 09:21:36 by joopark           #+#    #+#              #
-#    Updated: 2021/12/13 22:55:43 by joopark          ###   ########.fr        #
+#    Updated: 2021/12/14 13:46:47 by joopark          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ CODE_TESTER = ./mytest.cpp ./vector_module_tester.cpp ./map_module_tester.cpp ./
 OBJS_NAME_42TESTER = ${CODE_42TESTER:%.cpp=%.o}
 OBJS_NAME_TESTER = ${CODE_TESTER:%.cpp=%.o}
 COMPILER = clang++
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -std=c++98
 HEADER_CONTAINER = ./ft
 HEADER_UTILS = ./ftutils
 HEADER_REIMPLEMENT = ./reimplement
