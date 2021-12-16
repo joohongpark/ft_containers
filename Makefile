@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: joopark <joopark@student.42seoul.kr>       +#+  +:+       +#+         #
+#    By: joopark <joopark@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/23 09:21:36 by joopark           #+#    #+#              #
-#    Updated: 2021/12/14 13:46:47 by joopark          ###   ########.fr        #
+#    Updated: 2021/12/16 17:40:41 by joopark          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,15 +28,17 @@ clean:
 	rm -f $(OBJS_NAME_42TESTER) $(OBJS_NAME_TESTER)
 
 fclean: clean
-	rm -f $(NAME_42TESTER) $(NAME_TESTER)
+	rm -f $(NAME_42TESTER)_std $(NAME_42TESTER)_ft $(NAME_TESTER)
 
 %.o: %.cpp
 	$(COMPILER) ${CFLAGS} -I${HEADER_CONTAINER} -I${HEADER_UTILS} -I${HEADER_REIMPLEMENT} -c -o $@ $<
 
 $(NAME_42TESTER): $(OBJS_NAME_42TESTER)
-	$(COMPILER) $(CFLAGS) $(OBJS_NAME_42TESTER) -I$(HEADER_CONTAINER) -I$(HEADER_UTILS) -I$(HEADER_REIMPLEMENT) -o $(NAME_42TESTER)
+	$(COMPILER) $(CFLAGS) -DUSING_STD=1 $(OBJS_NAME_42TESTER) -I$(HEADER_CONTAINER) -I$(HEADER_UTILS) -I$(HEADER_REIMPLEMENT) -o $(NAME_42TESTER)_std
+	$(COMPILER) $(CFLAGS) -DUSING_STD=0 $(OBJS_NAME_42TESTER) -I$(HEADER_CONTAINER) -I$(HEADER_UTILS) -I$(HEADER_REIMPLEMENT) -o $(NAME_42TESTER)_ft
 
-$(NAME_TESTER): $(OBJS_NAME_TESTER)
-	$(COMPILER) $(CFLAGS) $(OBJS_NAME_TESTER) -I$(HEADER_CONTAINER) -I$(HEADER_UTILS) -I$(HEADER_REIMPLEMENT) -o $(NAME_TESTER)
+$(NAME_TESTER):
+	$(COMPILER) $(CFLAGS) -DUSING_STD=1 $(CODE_TESTER) -I$(HEADER_CONTAINER) -I$(HEADER_UTILS) -I$(HEADER_REIMPLEMENT) -o $(NAME_TESTER)_std
+	$(COMPILER) $(CFLAGS) -DUSING_STD=0 $(CODE_TESTER) -I$(HEADER_CONTAINER) -I$(HEADER_UTILS) -I$(HEADER_REIMPLEMENT) -o $(NAME_TESTER)_ft
 
 re: fclean all

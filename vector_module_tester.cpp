@@ -1,195 +1,187 @@
-#include <vector>
-#include <vector.hpp>
 #include "vector_module_tester.hpp"
 
-bool copy_constructor() {
-    std::vector<int> std_v;
-    ft::vector<int> ft_v;
-
-    for (int i = 0; i < 10; i++) {
-        std_v.push_back(i);
-        ft_v.push_back(i);
+template <typename T>
+void print_vector(ft::vector<T>& vec) {
+    std::cout << "[";
+    for (size_t i = 0; i < vec.size(); i++) {
+        std::cout << vec[i] << " ";
     }
-    ft::vector<int> ft_cp_v(ft_v);
-    std::vector<int> std_cp_v(std_v);
-    if ((ft_v[9] != ft_cp_v[9]) || (std_v[9] != std_cp_v[9])
-     || (ft_v.size() != ft_cp_v.size()) || (std_v.size() != std_cp_v.size())) {
-        return (false);
-    }
-
-    return (true);
+    std::cout << "]" << std::endl;
 }
 
-bool assign_operator() {
-    std::vector<int> std_v;
-    ft::vector<int> ft_v;
+void vec_constructors() {
+    std::cout << "[" << __func__ << "]" << std::endl;
+    ft::vector<int> default_construct;
+    ft::vector<int> fill_construct((size_t)10, 42);
+    ft::vector<int> range_construct(fill_construct.begin(), fill_construct.end());
+    ft::vector<int> copy_construct(range_construct);
 
-    for (int i = 0; i < 10; i++) {
-        std_v.push_back(i);
-        ft_v.push_back(i);
-    }
-    ft::vector<int> ft_cp_v = ft_v;
-    std::vector<int> std_cp_v = std_v;
-    if ((ft_v[9] != ft_cp_v[9]) || (std_v[9] != std_cp_v[9])
-     || (ft_v.size() != ft_cp_v.size()) || (std_v.size() != std_cp_v.size())) {
-        return (false);
-    }
-    return (true);
+    print_vector(default_construct);
+    print_vector(fill_construct);
+    print_vector(range_construct);
+    print_vector(copy_construct);
 }
 
-bool size() {
-    ft::vector<int> ft_v;
-    std::vector<int> std_v;
+void vec_assign_operator() {
+    std::cout << "[" << __func__ << "]" << std::endl;
+    ft::vector<int> fill_construct((size_t)10, 42);
+    ft::vector<int> assign_op_target;
 
-    for (int i = 0; i < 10; i++) {
-        ft_v.push_back(i);
-        std_v.push_back(i);
-    }
+    assign_op_target = fill_construct;
 
-    if (ft_v.size() != std_v.size()) { return (false); }
-    if (ft_v.capacity() != std_v.capacity()) { return (false); }
-
-    ft_v.resize(5);
-    std_v.resize(5);
-
-    if (ft_v.size() != std_v.size()) { return (false); }
-    if (ft_v.capacity() != std_v.capacity()) { return (false); }
-
-    for (size_t i = 0; i < ft_v.size(); i++) {
-        if (ft_v[i] != std_v[i]) {
-            return (false);
-        }
-    }
-
-    ft_v.resize(25);
-    std_v.resize(25);
-
-    if (ft_v.size() != std_v.size()) { return (false); }
-    if (ft_v.capacity() != std_v.capacity()) { return (false); }
-
-    for (size_t i = 0; i < ft_v.size(); i++) {
-        if (ft_v[i] != std_v[i]) {
-            return (false);
-        }
-    }
-
-    return (true);
+    print_vector(assign_op_target);
+    print_vector(fill_construct);
 }
 
-bool element_access() {
-    std::vector<int> std_v;
-    ft::vector<int> ft_v;
+void vec_iterators() {
+    std::cout << "[" << __func__ << "]" << std::endl;
+    ft::vector<char> vec;
 
-    for (int i = 0; i < 10; i++) {
-        std_v.push_back(i);
-        ft_v.push_back(i);
-    }
-    if ((ft_v[9] != std_v[9])
-     || (ft_v.at(1) != std_v.at(1))
-     || (ft_v.front() != std_v.front())
-     || (ft_v.back() != std_v.back())) {
-        return (false);
-    }
-    std_v.clear();
-    ft_v.clear();
-    if (!ft_v.empty() || !std_v.empty()) {
-        return (false);
-    }
-    try {
-        int i = ft_v[9];
-        (void)i;
-        return (false);
-    } catch(const std::exception& e) { }
-    
-    return (true);
-}
-
-bool push_pop_access() {
-    std::vector<int> std_v;
-    ft::vector<int> ft_v;
-
-    for (int i = 0; i < 10; i++) {
-        std_v.push_back(i);
-        ft_v.push_back(i);
-    }
-
-    for (int i = 0; i < 10; i++) {
-        if (ft_v.back() != std_v.back()) {
-            return (false);
-        }
-        std_v.pop_back();
-        ft_v.pop_back();
-    }
-    return (true);
-}
-
-bool swap() {
-    std::vector<int> std_v;
-    ft::vector<int> ft_v;
-    std::vector<int> std_v_empty;
-    ft::vector<int> ft_v_empty;
-
-    for (int i = 0; i < 10; i++) {
-        std_v.push_back(i);
-        ft_v.push_back(i);
-    }
-    std_v_empty.swap(std_v);
-    ft_v_empty.swap(ft_v);
-    if (!ft_v.empty() || !std_v.empty()) { return (false); }
-    if (ft_v.size() != std_v.size()) { return (false); }
-    if (ft_v.capacity() != std_v.capacity()) { return (false); }
-    return (true);
-}
-
-bool iterator() {
-    std::vector<int> std_v;
-    ft::vector<int> ft_v;
-
-    for (int i = 0; i < 10; i++) {
-        std_v.push_back(i);
-        ft_v.push_back(i);
-    }
-
-    ft::vector<int> ft_cp_v(ft_v);
-    std::vector<int> std_cp_v(std_v);
-
-    // vector 컨테이너끼리의 논리연산은 내부적으로 이터레이터를 통해 비교한다.
-    if ((ft_v != ft_cp_v) || (std_v != std_cp_v)) {
-        return (false);
-    }
-
-    ft::vector<int> ft_cp_iter(ft_v.begin() + 1, ft_v.end() - 1);
-    std::vector<int> std_cp_iter(std_v.begin() + 1, std_v.end() - 1);
-
-    if (ft_cp_iter.size() != std_cp_iter.size()) { return (false); }
-    if (ft_cp_iter.capacity() != std_cp_iter.capacity()) { return (false); }
-
-    for (size_t i = 0; i < ft_cp_iter.size(); i++) {
-        if (ft_cp_iter[i] != std_cp_iter[i]) {
-            return (false);
-        }
+    for (char c = 'a'; c < 'z'; c++) {
+        vec.push_back(c);
     }
     
-    return (true);
+    // begin() / end() / * operator
+    for (ft::vector<char>::iterator iter = vec.begin(); iter != vec.end(); iter++) {
+        std::cout << *iter;
+    }
+    std::cout << std::endl;
+    
+    // const operator check / +, - operator
+    for (ft::vector<char>::const_iterator iter = vec.begin() + 1; iter != vec.end() - 1; iter++) {
+        std::cout << *iter;
+    }
+    std::cout << std::endl;
+
+    // ++, --, operation between iterator and iterator
+    ft::vector<char>::iterator a = vec.begin();
+    ft::vector<char>::iterator b = vec.end();
+    a++;
+    b--;
+    ft::vector<char>::difference_type diff = b - a;
+    ft::vector<char>::difference_type diff1 = a - b;
+    std::cout << "diff : " << diff << ", " << diff1 << std::endl;
+
+    // reverse operator test
+    for (ft::vector<char>::reverse_iterator iter = vec.rbegin(); iter != vec.rend(); iter++) {
+        std::cout << *iter;
+    }
+    std::cout << std::endl;
 }
 
-bool const_iterator() {
-    std::vector<int> std_v;
-    ft::vector<int> ft_v;
+void vec_capacity_functions() {
+    std::cout << "[" << __func__ << "]" << std::endl;
+    ft::vector<char> vec;
 
-    for (int i = 0; i < 10; i++) {
-        std_v.push_back(i);
-        ft_v.push_back(i);
+    // size(), capacity(), empty() test
+    std::cout << "1 : " << vec.size() << ", " << vec.capacity() << ", " <<  vec.empty() << std::endl;
+
+    vec.reserve(5); // reserve() test
+    // size(), capacity(), empty() for reserve()
+    std::cout << "2 : " << vec.size() << ", " << vec.capacity() << ", " <<  vec.empty() << std::endl;
+
+    for (char c = 'a'; c < 'z'; c++) {
+        vec.push_back(c);
     }
-    std::vector<int>::const_iterator std_v_citer = std_v.begin();
-    ft::vector<int>::const_iterator ft_v_citer = ft_v.begin();
-    while (std_v_citer != std_v.end()) {
-        if (*std_v_citer != *ft_v_citer) {
-            return (false);
-        }
-        std_v_citer++;
-        ft_v_citer++;
-    }
-    return (true);
+    // size(), capacity(), empty() for size change
+    std::cout << "3 : " << vec.size() << ", " << vec.capacity() << ", " <<  vec.empty() << std::endl;
+
+    vec.resize(10); // resize() test
+    // size(), capacity(), empty() for resize()
+    std::cout << "3 : " << vec.size() << ", " << vec.capacity() << ", " <<  vec.empty() << std::endl;
+
+    print_vector(vec); // print vec
 }
 
+void vec_element_access_functions() {
+    std::cout << "[" << __func__ << "]" << std::endl;
+    ft::vector<char> vec;
+    for (char c = 'a'; c < 'z'; c++) {
+        vec.push_back(c);
+    }
+
+    // [] test
+    std::cout << vec[0];
+    std::cout << vec[21];
+    std::cout << vec[9];
+    std::cout << vec[8];
+    std::cout << vec[7];
+    std::cout << vec[10];
+    std::cout<< std::endl;
+
+    // at() test
+    std::cout << vec.at(0);
+    std::cout << vec.at(21);
+    std::cout << vec.at(9);
+    std::cout << vec.at(8);
+    std::cout << vec.at(7);
+    std::cout << vec.at(10);
+    std::cout<< std::endl;
+
+    // front test
+    std::cout << vec.front();
+    std::cout<< std::endl;
+
+    // back test
+    std::cout << vec.back();
+    std::cout<< std::endl;
+}
+
+void vec_assigns() {
+    std::cout << "[" << __func__ << "]" << std::endl;
+    ft::vector<char> vec_origin;
+    for (char c = 'a'; c < 'z'; c++) {
+        vec_origin.push_back(c);
+    }
+
+    ft::vector<char> vec_range;
+    ft::vector<char> vec_fill;
+    for (char c = 'a'; c < 'z'; c++) {
+        vec_range.push_back(c);
+        vec_fill.push_back(c);
+    }
+    vec_range.assign(vec_origin.begin() + 10, vec_origin.end() - 5);
+    vec_fill.assign(12, 'X');
+
+    print_vector(vec_range); // print vec_range
+    print_vector(vec_fill); // print vec_fill
+}
+
+void vec_push_pop_check() {
+    std::cout << "[" << __func__ << "]" << std::endl;
+    ft::vector<char> vec;
+    for (char c = 'a'; c < 'z'; c++) {
+        vec.push_back(c);
+    }
+    // size(), capacity(), empty() test
+    std::cout << "1 : " << vec.size() << ", " << vec.capacity() << ", " <<  vec.empty() << std::endl;
+    for (char c = 'a'; c < 'g'; c++) {
+        vec.pop_back();
+    }
+    // size(), capacity(), empty() test
+    std::cout << "1 : " << vec.size() << ", " << vec.capacity() << ", " <<  vec.empty() << std::endl;
+}
+
+void vec_inserts() {
+    std::cout << "[" << __func__ << "]" << std::endl;
+    ft::vector<char> vec_origin;
+    for (char c = 'a'; c < 'z'; c++) {
+        vec_origin.push_back(c);
+    }
+
+    ft::vector<char> vec_single_element;
+    ft::vector<char> vec_fill;
+    ft::vector<char> vec_range;
+    for (char c = 'a'; c < 'z'; c++) {
+        vec_single_element.push_back(c);
+        vec_fill.push_back(c);
+        vec_range.push_back(c);
+    }
+
+    vec_single_element.insert(vec_single_element.begin() + 10, 'X');
+    vec_fill.insert(vec_fill.begin() + 10, 10, 'X');
+    //vec_range.insert(vec_range.begin() + 10, vec_origin.begin(), vec_origin.end());
+    print_vector(vec_single_element); // print vec_single_element
+    print_vector(vec_fill); // print vec_fill
+    print_vector(vec_range); // print vec_range
+}

@@ -101,6 +101,7 @@ namespace ft {
 
             // etc
             size_type           max_size() const;               // 할당자의 max_size 리턴
+            void                swap(AVLTree& avltree);         // TODO: 포인터가 스왑되도록 구현하기
         
         private:
             long                getbf(node_type* node);
