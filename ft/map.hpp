@@ -475,15 +475,13 @@ namespace ft {
 
     template <class Key, class T, class Compare, class Allocator>
     void map<Key, T, Compare, Allocator>::swap(map& m) {
-        tree_type       tmp_tree = m._tree;
+        m._tree.swap(this->_tree);
         size_type       tmp_size = m._size;
         allocator_type  tmp_alloc = m._alloc;
         key_compare     tmp_comp = m._comp;
-        m._tree = this->_tree;
         m._size = this->_size;
         m._alloc = this->_alloc;
         m._comp = this->_comp;
-        this->_tree = tmp_tree;
         this->_size = tmp_size;
         this->_alloc = tmp_alloc;
         this->_comp = tmp_comp;

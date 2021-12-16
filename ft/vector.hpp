@@ -362,7 +362,7 @@ namespace ft {
     template <class T, class Allocator>
     typename vector<T, Allocator>::iterator vector<T, Allocator>::erase(const_iterator position) {
         difference_type start = position - begin();
-        for (difference_type i = start; i < _size - 1; i++) {
+        for (difference_type i = start; i < static_cast<difference_type>(_size) - 1; i++) {
             _data[i] = _data[i + 1];
         }
         _size--;
@@ -374,21 +374,19 @@ namespace ft {
         difference_type start = first - begin();
         difference_type fin = last - begin();
         difference_type size = fin - start;
-        if (size > 0) {
-            for (difference_type i = 0; i < size; i++) {
-                _data[start + i] = _data[fin + i];
-            }
-            _size -= size;
+        for (difference_type i = fin; i < static_cast<difference_type>(_size); i++) {
+            _data[i - size] = _data[i];
         }
+        _size -= size;
         return (iterator(&_data[start]));
     }
 
     template <class T, class Allocator>
     typename vector<T, Allocator>::iterator vector<T, Allocator>::insert(const_iterator position, const value_type& x) {
+        difference_type start = position - begin();
         if (_size == _capacity) {
             reserve(_recommend_size(_size + 1));
         }
-        difference_type start = position - begin();
         for (difference_type i = _size; i > start; i--) {
             _data[i] = _data[i - 1];
         }
@@ -399,10 +397,10 @@ namespace ft {
 
     template <class T, class Allocator>
     typename vector<T, Allocator>::iterator vector<T, Allocator>::insert(const_iterator position, size_type n, const value_type& x) {
+        difference_type start = position - begin();
         if ((_size + n) > _capacity) {
             reserve(_recommend_size(_size + n));
         }
-        difference_type start = position - begin();
         for (difference_type i = _size; i > start; i--) {
             _data[i + n - 1] = _data[i - 1];
         }
@@ -418,10 +416,10 @@ namespace ft {
     typename vector<T, Allocator>::iterator vector<T, Allocator>::insert(const_iterator position, InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last) {
         vector new_data(first, last);
         size_type new_data_len = new_data.size();
+        difference_type start = position - begin();
         if ((_size + new_data_len) > _capacity) {
             reserve(_recommend_size(_size + new_data_len));
         }
-        difference_type start = position - begin();
         for (difference_type i = _size; i > start; i--) {
             _data[i + new_data_len - 1] = _data[i - 1];
         }

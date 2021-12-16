@@ -16,5 +16,8 @@ int main(void) {
     vec_assigns();
     vec_push_pop_check();
     vec_inserts();
+    vec_erases();
+    vec_swap_clear();
+    vec_relational_operators();
     return (0);
 }

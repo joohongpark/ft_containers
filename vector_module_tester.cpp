@@ -180,8 +180,59 @@ void vec_inserts() {
 
     vec_single_element.insert(vec_single_element.begin() + 10, 'X');
     vec_fill.insert(vec_fill.begin() + 10, 10, 'X');
-    //vec_range.insert(vec_range.begin() + 10, vec_origin.begin(), vec_origin.end());
+    vec_range.insert(vec_range.begin() + 10, vec_origin.begin(), vec_origin.end());
     print_vector(vec_single_element); // print vec_single_element
     print_vector(vec_fill); // print vec_fill
     print_vector(vec_range); // print vec_range
+}
+
+void vec_erases() {
+    std::cout << "[" << __func__ << "]" << std::endl;
+    ft::vector<char> vec_pos;
+    ft::vector<char> vec_range;
+    for (char c = 'a'; c < 'z'; c++) {
+        vec_pos.push_back(c);
+        vec_range.push_back(c);
+    }
+
+    // iterator erase (iterator position); test
+    std::cout << *(vec_pos.erase(vec_pos.begin())) << std::endl;
+    std::cout << *(vec_pos.erase(vec_pos.begin() + 1)) << std::endl;
+    std::cout << *(vec_pos.erase(vec_pos.begin() + 3)) << std::endl;
+
+    // iterator erase (iterator first, iterator last); test
+    std::cout << *(vec_range.erase(vec_range.begin() + 10, vec_range.end() - 5)) << std::endl;
+    std::cout << *(vec_range.erase(vec_range.begin(), vec_range.begin() + 2)) << std::endl;
+
+    print_vector(vec_pos); // print vec_pos
+    print_vector(vec_range); // print vec_range
+}
+
+void vec_swap_clear() {
+    ft::vector<int> v1((size_t)10, 42);
+    ft::vector<int> v2;
+    ft::vector<int> v3((size_t)10, 42);
+
+    v2.swap(v1);
+    print_vector(v1); // print v1
+    print_vector(v2); // print v2
+    print_vector(v3); // print v3
+    v2.clear();
+    ft::vector<int>().swap(v3);
+    print_vector(v1); // print v1
+    print_vector(v2); // print v2
+    print_vector(v3); // print v3
+
+}
+
+void vec_relational_operators() {
+    ft::vector<int> foo (3,100);   // three ints with a value of 100
+    ft::vector<int> bar (2,200);   // two ints with a value of 200
+
+    if (foo==bar) std::cout << "foo and bar are equal\n";
+    if (foo!=bar) std::cout << "foo and bar are not equal\n";
+    if (foo< bar) std::cout << "foo is less than bar\n";
+    if (foo> bar) std::cout << "foo is greater than bar\n";
+    if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+    if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
 }

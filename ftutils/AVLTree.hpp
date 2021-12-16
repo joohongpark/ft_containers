@@ -101,7 +101,7 @@ namespace ft {
 
             // etc
             size_type           max_size() const;               // 할당자의 max_size 리턴
-            void                swap(AVLTree& avltree);         // TODO: 포인터가 스왑되도록 구현하기
+            void                swap(AVLTree& avltree);         // swap 연산 시에 데이터 복사가 일어나면 안됨
         
         private:
             long                getbf(node_type* node);
@@ -352,6 +352,19 @@ namespace ft {
     template <class Tp, class Compare, class Allocator>
     typename AVLTree<Tp, Compare, Allocator>::size_type AVLTree<Tp, Compare, Allocator>::max_size() const {
         return (alloc.max_size());
+    }
+
+    template <class Tp, class Compare, class Allocator>
+    void AVLTree<Tp, Compare, Allocator>::swap(AVLTree& avltree) {
+        node_allocator_type tmp_alloc = this->alloc;
+        value_compare       tmp_comp = this->comp;
+        node_type*          tmp_root = this->root;
+        this->alloc = avltree.alloc;
+        this->comp = avltree.comp;
+        this->root = avltree.root;
+        avltree.alloc = tmp_alloc;
+        avltree.comp = tmp_comp;
+        avltree.root = tmp_root;
     }
 
     template <class Tp, class Compare, class Allocator>

@@ -24,4 +24,7 @@ void vec_element_access_functions();
 void vec_assigns();
 void vec_push_pop_check();
 void vec_inserts();
+void vec_erases();
+void vec_swap_clear();
+void vec_relational_operators();
 #endif

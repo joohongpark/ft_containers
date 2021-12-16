@@ -23,10 +23,29 @@ namespace ft {
 
             bool                                            empty() const;
             size_type                                       size() const;
-            value_type                                      top();
-            const value_type                                top() const;
+            value_type&                                     top();
+            const value_type&                               top() const;
             void                                            push(const value_type& x);
             void                                            pop();
+
+
+            template <class _T, class _Container>
+            friend bool operator==(const stack<_T, _Container>& x, const stack<_T, _Container>& y);
+
+            template <class _T, class _Container>
+            friend bool operator< (const stack<_T, _Container>& x, const stack<_T, _Container>& y);
+
+            template <class _T, class _Container>
+            friend bool operator!=(const stack<_T, _Container>& x, const stack<_T, _Container>& y);
+
+            template <class _T, class _Container>
+            friend bool operator> (const stack<_T, _Container>& x, const stack<_T, _Container>& y);
+
+            template <class _T, class _Container>
+            friend bool operator>=(const stack<_T, _Container>& x, const stack<_T, _Container>& y);
+
+            template <class _T, class _Container>
+            friend bool operator<=(const stack<_T, _Container>& x, const stack<_T, _Container>& y);
     };
 }
 
@@ -58,12 +77,12 @@ namespace ft {
     }
 
     template <class T, class Container>
-    typename stack<T, Container>::value_type stack<T, Container>::top() {
+    typename stack<T, Container>::value_type& stack<T, Container>::top() {
         return (c.back());
     }
 
     template <class T, class Container>
-    const typename stack<T, Container>::value_type stack<T, Container>::top() const {
+    const typename stack<T, Container>::value_type& stack<T, Container>::top() const {
         return (c.back());
     }
 
