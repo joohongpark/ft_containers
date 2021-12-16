@@ -11,7 +11,7 @@
 #include <reverse_iterator.hpp>
 #include <equal.hpp>
 #include <lexicographical_compare.hpp>
-#include <itercheck.hpp>
+#include <is_input_iterator.hpp>
 
 namespace ft {
     template <
@@ -73,7 +73,7 @@ namespace ft {
             pair<iterator, bool>                insert(const value_type& v);
             iterator                            insert(const_iterator position, const value_type& v);
             template <class InputIterator>
-            void                                insert(InputIterator first, typename ft::itercheck<InputIterator, std::input_iterator_tag>::type last);
+            void                                insert(InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last);
             iterator                            erase(const_iterator position);
             size_type                           erase(const key_type& k);
             iterator                            erase(const_iterator first, const_iterator last);
@@ -238,7 +238,7 @@ namespace ft {
 
     template <class Key, class T, class Compare, class Allocator>
     template <class InputIterator>
-    void map<Key, T, Compare, Allocator>::insert(InputIterator first, typename ft::itercheck<InputIterator, std::input_iterator_tag>::type last) {
+    void map<Key, T, Compare, Allocator>::insert(InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last) {
         while (first != last) {
             _size++;
             _tree.insert(*first);

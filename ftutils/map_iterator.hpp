@@ -1,12 +1,12 @@
 #ifndef MAP_ITERATOR_HPP
 #define MAP_ITERATOR_HPP
 
-#include <type_traits>
 #include <iostream>
 
 #include <enable_if.hpp>
 #include <choose_type.hpp>
 #include <iterator_traits.hpp>
+#include <is_const.hpp>
 
 namespace ft {
     template <class T>
@@ -19,7 +19,7 @@ namespace ft {
             typedef typename iterator_traits<data*>::value_type                                                 value_type;
             typedef typename iterator_traits<data*>::difference_type                                            difference_type;
             typedef typename iterator_traits<data*>::pointer                                                    pointer;
-            typedef typename ft::choose_type<std::is_const<T>::value, const value_type&, value_type&>::type     reference;
+            typedef typename ft::choose_type<ft::is_const<T>::value, const value_type&, value_type&>::type      reference;
         private:
             iterator_type iter;
             bool is_end;
@@ -27,7 +27,7 @@ namespace ft {
             map_iterator() : iter(NULL), is_end(true) {};
             map_iterator(const iterator_type& x) : iter(x), is_end(false) {};
             template <class Type>
-            map_iterator(const map_iterator<Type>& i, typename ft::enable_if<!std::is_const<Type>::value>::type* = 0) : iter(i.base()) {}
+            map_iterator(const map_iterator<Type>& i, typename ft::enable_if<!ft::is_const<Type>::value>::type* = 0) : iter(i.base()) {}
 
             reference operator*() const {
                 return (iter->data);
