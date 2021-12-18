@@ -74,9 +74,9 @@ namespace ft {
             iterator                            insert(const_iterator position, const value_type& v);
             template <class InputIterator>
             void                                insert(InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last);
-            iterator                            erase(const_iterator position);
+            void                                erase(const_iterator position);
             size_type                           erase(const key_type& k);
-            iterator                            erase(const_iterator first, const_iterator last);
+            void                                erase(const_iterator first, const_iterator last);
             void                                clear();
 
             // map operations:
@@ -247,14 +247,10 @@ namespace ft {
     }
 
     template <class Key, class T, class Compare, class Allocator>
-    typename map<Key, T, Compare, Allocator>::iterator map<Key, T, Compare, Allocator>::erase(const_iterator position) {
-        value_type v(*position);
-        iterator rtn(_tree.getnode(v));
-        rtn++;
-        if (_tree.delval(v) == true) {
+    void map<Key, T, Compare, Allocator>::erase(const_iterator position) {
+        if (_tree.delval(*position) == true) {
             _size--;
         }
-        return (rtn);
     }
 
     template <class Key, class T, class Compare, class Allocator>
@@ -267,12 +263,13 @@ namespace ft {
     }
 
     template <class Key, class T, class Compare, class Allocator>
-    typename map<Key, T, Compare, Allocator>::iterator map<Key, T, Compare, Allocator>::erase(const_iterator first, const_iterator last) {
+    void map<Key, T, Compare, Allocator>::erase(const_iterator first, const_iterator last) {
         while (first != last) {
-            if (_tree.delval(*first) == true) {
+            const_iterator target = first;
+            first++;
+            if (_tree.delval(*target) == true) {
                 _size--;
             }
-            first++;
         }
     }
 

@@ -24,41 +24,41 @@ namespace ft {
                     long height_tmp = a->height;
                     a->height = b->height;
                     b->height = height_tmp;
+                    if (a->parent != NULL) {
+                        if (a->parent->leftleaf == a) {
+                            a->parent->leftleaf = b;
+                        } else {
+                            a->parent->rightleaf = b;
+                        }
+                    }
+                    if (b->parent != NULL) {
+                        if (b->parent->leftleaf == b) {
+                            b->parent->leftleaf = a;
+                        } else {
+                            b->parent->rightleaf = a;
+                        }
+                    }
                     Node* parent_tmp = a->parent;
                     a->parent = b->parent;
                     b->parent = parent_tmp;
+                    if (a->leftleaf != NULL) {
+                        a->leftleaf->parent = b;
+                    }
+                    if (b->leftleaf != NULL) {
+                        b->leftleaf->parent = a;
+                    }
+                    if (a->rightleaf != NULL) {
+                        a->rightleaf->parent = b;
+                    }
+                    if (b->rightleaf != NULL) {
+                        b->rightleaf->parent = a;
+                    }
                     Node* leftleaf_tmp = a->leftleaf;
                     a->leftleaf = b->leftleaf;
                     b->leftleaf = leftleaf_tmp;
                     Node* rightleaf_tmp = a->rightleaf;
                     a->rightleaf = b->rightleaf;
                     b->rightleaf = rightleaf_tmp;
-                    if (a->parent != NULL) {
-                        if (a->parent->leftleaf == b) {
-                            a->parent->leftleaf = a;
-                        } else {
-                            a->parent->rightleaf = a;
-                        }
-                    }
-                    if (b->parent != NULL) {
-                        if (b->parent->leftleaf == a) {
-                            b->parent->leftleaf = b;
-                        } else {
-                            b->parent->rightleaf = b;
-                        }
-                    }
-                    if (a->leftleaf != NULL) {
-                        a->leftleaf->parent = a;
-                    }
-                    if (b->leftleaf != NULL) {
-                        b->leftleaf->parent = b;
-                    }
-                    if (a->rightleaf != NULL) {
-                        a->rightleaf->parent = a;
-                    }
-                    if (b->rightleaf != NULL) {
-                        b->rightleaf->parent = b;
-                    }
                 }
             };
 
@@ -85,7 +85,7 @@ namespace ft {
             Tp*                 insert(const Tp& val);          // 값 삽입 (이미 존재하면 NULL 반환)
             bool                have(const Tp& val) const;      // 값 존재유무 확인 (객체 멤버변수가 변하지 않음을 보증)
             Tp*                 find(const Tp& val);            // 값 탐색 (존재하지 않으면 NULL 반환)
-            bool                delval(Tp& val);                // 값 삭제 (값이 존재해서 삭제되면 true 반환)
+            bool                delval(const Tp& val);          // 값 삭제 (값이 존재해서 삭제되면 true 반환)
             void                clear();
 
             // for iterator
@@ -404,11 +404,11 @@ namespace ft {
     }
 
     template <class Tp, class Compare, class Allocator>
-    bool AVLTree<Tp, Compare, Allocator>::delval(Tp& val) {
+    bool AVLTree<Tp, Compare, Allocator>::delval(const Tp& val) {
         bool rtn = false;
         node_type* pointer = this->root;
         node_type* target = NULL;
-        Tp* val_p = &val;
+        Tp* val_p = const_cast<Tp*>(&val);
         while (pointer != NULL) {
             if (comp(pointer->data, *val_p)) {
                 pointer = pointer->rightleaf;
@@ -417,6 +417,9 @@ namespace ft {
             } else {
                 rtn = true;
                 if (target != NULL) {
+                    if (target == this->root) {
+                        this->root = pointer;
+                    }
                     node_type::node_swap(target, pointer);
                     pointer = target;
                 }

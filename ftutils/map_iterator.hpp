@@ -25,9 +25,13 @@ namespace ft {
             bool is_end;
         public:
             map_iterator() : iter(NULL), is_end(true) {};
-            map_iterator(const iterator_type& x) : iter(x), is_end(false) {};
+            map_iterator(const iterator_type& x) : iter(x), is_end(false) {
+                if (x == NULL) {
+                    is_end = true;
+                }
+            };
             template <class Type>
-            map_iterator(const map_iterator<Type>& i, typename ft::enable_if<!ft::is_const<Type>::value>::type* = 0) : iter(i.base()) {}
+            map_iterator(const map_iterator<Type>& i, typename ft::enable_if<!ft::is_const<Type>::value>::type* = 0) : iter(i.base()), is_end(i.end_check()) {}
 
             reference operator*() const {
                 return (iter->data);

@@ -1,23 +1,34 @@
 #ifndef MAP_MODULE_TESTER_HPP
 #define MAP_MODULE_TESTER_HPP
 
-#include <string>
-#include <map>
-#include <map.hpp>
-#include <vector>
-#include <vector.hpp>
-#include <stdlib.h>
+#ifndef USING_STD
+#define USING_STD 1
+#endif
+#if USING_STD //CREATE A REAL STL EXAMPLE
+	#include <map>
+	namespace ft = std;
+#else
+	#include <map.hpp>
+#endif
 
-bool map_insert_big_size();
-bool map_insert_value_method(int n, std::string str);
-bool map_insert_iter_method(int n, std::string str);
-bool map_insert_inputiter_method();
-bool map_erase_method();
-bool map_clear_method();
-bool map_count_method();
-bool map_find_method();
-bool map_bound_method();
-bool map_equal_method();
-bool map_operator_method();
+#include <iostream>
+
+template <typename K, typename V>
+void print_map(ft::map<K, V>& map);
+
+void map_constructors();
+void map_assign_operator();
+void map_iterators();
+void map_capacity_functions();
+void map_element_access_functions();
+void map_inserts();
+void map_erases();
+void map_swap_clear();
+void map_find();
+void map_count();
+void map_lower_bound();
+void map_upper_bound();
+void map_equal_range();
+void map_relational_operators();
 
 #endif

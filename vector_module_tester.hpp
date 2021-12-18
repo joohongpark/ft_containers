@@ -14,7 +14,7 @@
 #include <iostream>
 
 template <typename T>
-void print_vector(std::vector<T>& vec);
+void print_vector(ft::vector<T>& vec);
 
 void vec_constructors();
 void vec_assign_operator();
