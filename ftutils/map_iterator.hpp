@@ -91,10 +91,25 @@ namespace ft {
 
 namespace ft {
     template <class T1, class T2>
-    bool operator==(const map_iterator<T1>& x, const map_iterator<T2>& y) { return bool((x.base() == y.base()) && (x.end_check() == y.end_check())); }
+    bool operator==(const map_iterator<T1>& x, const map_iterator<T2>& y) {
+        if (x.end_check() == true && y.end_check() == true) {
+            return (true);
+        }
+        return bool((x.base() == y.base()) && (x.end_check() == y.end_check()));
+    }
     template <class T>
-    bool operator!=(const map_iterator<T >& x, const map_iterator<T >& y) { return bool((x.base() != y.base()) || (x.end_check() != y.end_check())); }
+    bool operator!=(const map_iterator<T >& x, const map_iterator<T >& y) {
+        if (x.end_check() == true && y.end_check() == true) {
+            return (false);
+        }
+        return bool((x.base() != y.base()) || (x.end_check() != y.end_check()));
+    }
     template <class T1, class T2>
-    bool operator!=(const map_iterator<T1>& x, const map_iterator<T2>& y) { return bool((x.base() != y.base()) || (x.end_check() != y.end_check())); }
+    bool operator!=(const map_iterator<T1>& x, const map_iterator<T2>& y) {
+        if (x.end_check() == true && y.end_check() == true) {
+            return (false);
+        }
+        return bool((x.base() != y.base()) || (x.end_check() != y.end_check()));
+    }
 }
 #endif
