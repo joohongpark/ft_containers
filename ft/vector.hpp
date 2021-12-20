@@ -34,10 +34,10 @@ namespace ft {
 
         public:
             // construct/copy/destroy:
-            vector();
-            vector(size_type n, const value_type& val);
+            vector(const allocator_type& alloc = allocator_type());
+            vector(size_type n, const value_type& val = value_type());
             template <class InputIterator>
-            vector(InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last);
+            vector(InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last, const allocator_type& alloc = allocator_type());
             vector(const vector& x);
             ~vector();
 
@@ -98,7 +98,7 @@ namespace ft {
 
     // constructors
     template <class T, class Allocator>
-    vector<T, Allocator>::vector() : _data(NULL), _size(0), _capacity(0) {}
+    vector<T, Allocator>::vector(const allocator_type& alloc) : _data(NULL), _size(0), _capacity(0), _alloc(alloc) {}
 
     template <class T, class Allocator>
     vector<T, Allocator>::vector(size_type n, const value_type& val) : _size(n), _capacity(n) {
@@ -114,7 +114,7 @@ namespace ft {
 
     template <class T, class Allocator>
     template <class InputIterator>
-    vector<T, Allocator>::vector(InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last) {
+    vector<T, Allocator>::vector(InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last, const allocator_type& alloc) : _alloc(alloc) {
         _size = 0;
         _capacity = 0;
         _data = NULL;

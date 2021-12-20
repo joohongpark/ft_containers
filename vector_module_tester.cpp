@@ -12,12 +12,14 @@ void print_vector(ft::vector<T>& vec) {
 void vec_constructors() {
     std::cout << "[" << __func__ << "]" << std::endl;
     ft::vector<int> default_construct;
-    ft::vector<int> fill_construct((size_t)10, 42);
+    ft::vector<int> fill_construct((size_t)10);
+    ft::vector<int> fill_construct_2((size_t)10, 42);
     ft::vector<int> range_construct(fill_construct.begin(), fill_construct.end());
     ft::vector<int> copy_construct(range_construct);
 
     print_vector(default_construct);
     print_vector(fill_construct);
+    print_vector(fill_construct_2);
     print_vector(range_construct);
     print_vector(copy_construct);
 }
@@ -34,7 +36,6 @@ void vec_assign_operator() {
 }
 
 void vec_iterators() {
-    std::cout << "[" << __func__ << "]" << std::endl;
     ft::vector<char> vec;
 
     for (char c = 'a'; c < 'z'; c++) {
@@ -53,11 +54,29 @@ void vec_iterators() {
     }
     std::cout << std::endl;
 
-    // ++, --, operation between iterator and iterator
+    // +, -, ++, --, operation between iterator and iterator
     ft::vector<char>::iterator a = vec.begin();
-    ft::vector<char>::iterator b = vec.end();
+    ft::vector<char>::const_iterator b = vec.end();
     a++;
     b--;
+
+	a = a + 5;
+	a = 1 + a;
+	a = a - 4;
+
+	std::cout << *(a += 2) << std::endl;
+	std::cout << *(a -= 1) << std::endl;
+
+	*(a -= 2) = 'Z';
+	*(a += 2) = 'W';
+
+	std::cout << "const_iterator +=: " << *(b += 2) << std::endl;
+	std::cout << "const_iterator -=: " << *(b -= 2) << std::endl;
+
+	std::cout << "(iterator == const_iterator): " << (a == b) << std::endl;
+	std::cout << "(const_iterator - iterator): " << (b - a) << std::endl;
+	std::cout << "(iterator + 3 != iterator): " << (a + 3 == a) << std::endl;
+
     ft::vector<char>::difference_type diff = b - a;
     ft::vector<char>::difference_type diff1 = a - b;
     std::cout << "diff : " << diff << ", " << diff1 << std::endl;

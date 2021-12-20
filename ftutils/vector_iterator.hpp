@@ -18,10 +18,18 @@ namespace ft {
         private:
             iterator_type iter;
         public:
-            vector_iterator();
+            vector_iterator() : iter(NULL) {};
             vector_iterator(const iterator_type& x) : iter(x) {}
             template <class Type>
             vector_iterator(const vector_iterator<Type>& i, typename ft::enable_if<!ft::is_const<Type>::value>::type* = 0) : iter(i.base()) {}
+
+            //operator=
+            vector_iterator& operator=(const vector_iterator& iter) {
+                if (this != &iter) {
+                    this->iter = iter.iter;
+                }
+                return (*this);
+            }
 
             reference           operator*() const {
                 return (*iter);
@@ -102,6 +110,11 @@ namespace ft {
     template <class T1, class T2>
     typename vector_iterator<T1>::difference_type operator+ (const vector_iterator<T1>& x, const vector_iterator<T2>& y) {
         return static_cast<typename vector_iterator<T1>::difference_type>(x.base() + y.base());
+    }
+    template <class T>
+    vector_iterator<T> operator+ (typename vector_iterator<T>::difference_type n, vector_iterator<T>& x) {
+        x += n;
+        return (x);
     }
 }
 #endif
