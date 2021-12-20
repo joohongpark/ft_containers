@@ -7,18 +7,19 @@
 #include <choose_type.hpp>
 #include <iterator_traits.hpp>
 #include <is_const.hpp>
+#include <remove_const.hpp>
 
 namespace ft {
     template <class T>
     class map_iterator {
         public:
-            typedef typename std::remove_const<T>::type                                                         tree;
+            typedef typename ft::remove_const<T>::type                                                          tree;
             typedef typename tree::node_type::value_type                                                        data;
             typedef typename tree::node_type*                                                                   iterator_type;
             typedef std::bidirectional_iterator_tag                                                             iterator_category;
-            typedef typename iterator_traits<data*>::value_type                                                 value_type;
+            typedef typename ft::choose_type<ft::is_const<T>::value, const data, data>::type                    value_type;
             typedef typename iterator_traits<data*>::difference_type                                            difference_type;
-            typedef typename iterator_traits<data*>::pointer                                                    pointer;
+            typedef typename ft::choose_type<ft::is_const<T>::value, const data*, data*>::type                  pointer;
             typedef typename ft::choose_type<ft::is_const<T>::value, const value_type&, value_type&>::type      reference;
         private:
             iterator_type iter;

@@ -90,6 +90,7 @@ namespace ft {
 
             // for iterator
             node_type*          getnode(const Tp& val);         // 값을 가지고 있는 노드 반환
+            node_type*          cgetnode(const Tp& val) const;  // 값을 가지고 있는 노드 반환 (const)
             static node_type*   getmin(node_type* pointer);     // 최소값 노드 반환
             static node_type*   getmax(node_type* pointer);     // 최대값 노드 반환
             static node_type*   getprev(node_type* pointer);    // 인수로 주어진 노드에서 다음 노드 반환
@@ -131,6 +132,7 @@ namespace ft {
     template <class Tp, class Compare, class Allocator>
     AVLTree<Tp, Compare, Allocator>& AVLTree<Tp, Compare, Allocator>::operator=(const AVLTree& avltree) {
         if (this != &avltree) {
+            this->clear();
             node_type* pointer = getmax(avltree.root);
             while (pointer != NULL) {
                 this->insert(pointer->data);
@@ -180,6 +182,29 @@ namespace ft {
 
     template <class Tp, class Compare, class Allocator>
     typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Allocator>::getnode(const Tp& val) {
+        node_type* pointer = this->root;
+        while (pointer != NULL) {
+            if (comp(val, pointer->data)) {
+                if (pointer->leftleaf == NULL) {
+                    break ;
+                } else {
+                    pointer = pointer->leftleaf;
+                }
+            } else if (comp(pointer->data, val)) {
+                if (pointer->rightleaf == NULL) {
+                    break ;
+                } else {
+                    pointer = pointer->rightleaf;
+                }
+            } else {
+                break ;
+            }
+        }
+        return (pointer);
+    }
+
+    template <class Tp, class Compare, class Allocator>
+    typename AVLTree<Tp, Compare, Allocator>::node_type* AVLTree<Tp, Compare, Allocator>::cgetnode(const Tp& val) const {
         node_type* pointer = this->root;
         while (pointer != NULL) {
             if (comp(val, pointer->data)) {
@@ -447,6 +472,7 @@ namespace ft {
                         rewind(pointer->rightleaf);
                     } else {
                         this->root = pointer->rightleaf;
+                        this->root->parent = NULL;
                     }
                     alloc.deallocate(pointer, 1);
                     break ;
@@ -461,6 +487,7 @@ namespace ft {
                         rewind(pointer->leftleaf);
                     } else {
                         this->root = pointer->leftleaf;
+                        this->root->parent = NULL;
                     }
                     alloc.deallocate(pointer, 1);
                     break ;

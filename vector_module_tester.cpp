@@ -56,9 +56,9 @@ void vec_iterators() {
 
     // +, -, ++, --, operation between iterator and iterator
     ft::vector<char>::iterator a = vec.begin();
-    ft::vector<char>::const_iterator b = vec.end();
+    ft::vector<char>::const_iterator b = vec.begin();
     a++;
-    b--;
+    a--;
 
 	a = a + 5;
 	a = 1 + a;

@@ -156,8 +156,9 @@ namespace ft {
     template <class InputIterator>
     map<Key, T, Compare, Allocator>::map(InputIterator first, InputIterator last, const key_compare& comp, const allocator_type& alloc) : _size(0), _alloc(alloc), _comp(comp) {
         while (first != last) {
-            _size++;
-            _tree.insert(*first);
+            if (_tree.insert(*first) != NULL) {
+                _size++;
+            }
             first++;
         }
     }
@@ -240,8 +241,9 @@ namespace ft {
     template <class InputIterator>
     void map<Key, T, Compare, Allocator>::insert(InputIterator first, typename enable_if<is_input_iterator<InputIterator>::value, InputIterator>::type last) {
         while (first != last) {
-            _size++;
-            _tree.insert(*first);
+            if (_tree.insert(*first) != NULL) {
+                _size++;
+            }
             first++;
         }
     }
@@ -258,8 +260,9 @@ namespace ft {
         value_type target(k, mapped_type());
         if (_tree.delval(target) == true) {
             _size--;
+            return (1);
         }
-        return (_size);
+        return (0);
     }
 
     template <class Key, class T, class Compare, class Allocator>
@@ -300,9 +303,9 @@ namespace ft {
     typename map<Key, T, Compare, Allocator>::const_iterator map<Key, T, Compare, Allocator>::find(const key_type& k) const {
         value_type target(k, mapped_type());
         if (_tree.have(target)) {
-            return (const_iterator(_tree.getnode(target)));
+            return (const_iterator(_tree.cgetnode(target)));
         } else {
-            return (++const_iterator(_tree.end()));
+            return (++const_iterator(_tree.cend()));
         }
     }
 
@@ -326,8 +329,8 @@ namespace ft {
 
     template <class Key, class T, class Compare, class Allocator>
     typename map<Key, T, Compare, Allocator>::const_iterator map<Key, T, Compare, Allocator>::lower_bound(const key_type& k) const {
-        typename tree_type::node_type* node = _tree.begin();
-        typename tree_type::node_type* node_end = _tree.end();
+        typename tree_type::node_type* node = _tree.cbegin();
+        typename tree_type::node_type* node_end = _tree.cend();
         while (true) {
             if (_comp(node->data.first, k) == false) {
                 return (const_iterator(node));
@@ -360,8 +363,8 @@ namespace ft {
 
     template <class Key, class T, class Compare, class Allocator>
     typename map<Key, T, Compare, Allocator>::const_iterator map<Key, T, Compare, Allocator>::upper_bound(const key_type& k) const {
-        typename tree_type::node_type* node = _tree.begin();
-        typename tree_type::node_type* node_end = _tree.end();
+        typename tree_type::node_type* node = _tree.cbegin();
+        typename tree_type::node_type* node_end = _tree.cend();
         while (true) {
             if (_comp(k, node->data.first) == true) {
                 return (iterator(node));
@@ -401,14 +404,14 @@ namespace ft {
     > map<Key, T, Compare, Allocator>::equal_range(const key_type& k) const {
         value_type target(k, mapped_type());
         if (_tree.have(target)) {
-            typename tree_type::node_type* node = _tree.getnode(target);
+            typename tree_type::node_type* node = _tree.cgetnode(target);
             return (pair<const_iterator, const_iterator>(iterator(node), ++iterator(node)));
         } else {
-            typename tree_type::node_type* node = _tree.end();
+            typename tree_type::node_type* node = _tree.cend();
             if ((node == NULL) || _comp(node->data.first, k) == true) {
                 return (pair<const_iterator, const_iterator>(++const_iterator(node), ++const_iterator(node)));
             } else {
-                return (pair<const_iterator, const_iterator>(const_iterator(_tree.begin()), const_iterator(_tree.begin())));
+                return (pair<const_iterator, const_iterator>(const_iterator(_tree.cbegin()), const_iterator(_tree.cbegin())));
             }
         }
     }

@@ -1,7 +1,9 @@
 #include "map_module_tester.hpp"
+#include <list>
 
 template <typename K, typename V>
 void print_map(ft::map<K, V>& map) {
+    std::cout << "size : " << map.size() << std::endl;
     std::cout << "[";
     for (typename ft::map<K, V>::iterator iter = map.begin(); iter != map.end(); iter++) {
         std::cout << "(" << (*(iter)).first << ", " << (*(iter)).second << ") ";
@@ -9,28 +11,53 @@ void print_map(ft::map<K, V>& map) {
     std::cout << "]" << std::endl;
 }
 
+template <typename K, typename V>
+void print_map_c(ft::map<K, V> const & map) {
+    std::cout << "[";
+    for (typename ft::map<K, V>::const_iterator iter = map.begin(); iter != map.end(); iter++) {
+        std::cout << "(" << (*(iter)).first << ", " << (*(iter)).second << ") ";
+    }
+    std::cout << "]" << std::endl;
+}
+
 void map_constructors() {
-    std::cout << "[" << __func__ << "]" << std::endl;
+	std::list<ft::pair<const int, char> > lst;
+
+	for (char c = 'a'; c < 'z'; c++) {
+		lst.push_back(ft::make_pair(c, c));
+    }
+    lst.push_back(ft::make_pair('a', 'z'));
+
     ft::map<int, char> default_construct;
-    std::cout << "check" << std::endl;
-    ft::map<int, char> range_construct(default_construct.begin(), default_construct.end()); // empty
-    std::cout << "check" << std::endl;
-    ft::map<int, char> copy_construct(range_construct); // empty
-    std::cout << "check" << std::endl;
-    print_map(default_construct);
-    print_map(range_construct);
-    print_map(copy_construct);
+    ft::map<int, char> range_construct(lst.begin(), lst.end());
+    ft::map<int, char> const c_range_construct(lst.begin(), lst.end());
+	ft::map<int, char>::iterator it = range_construct.begin(), ite = range_construct.end();
+	ft::map<int, char> range_construct_1(it, --(--ite));
 
     default_construct[10] = 'a';
     default_construct[20] = 'b';
     default_construct[30] = 'c';
 
-    ft::map<int, char> range_construct_1(default_construct.begin(), default_construct.end());
-    ft::map<int, char> copy_construct_1(range_construct);
+    ft::map<int, char> range_construct_2(default_construct.begin(), default_construct.end());
+    ft::map<int, char> copy_construct(range_construct);
 
     print_map(default_construct);
+    print_map(range_construct);
     print_map(range_construct_1);
-    print_map(copy_construct_1);
+    print_map(range_construct_2);
+    print_map(copy_construct);
+    print_map_c(c_range_construct);
+
+	default_construct = range_construct;
+	range_construct_1 = copy_construct;
+	range_construct_2.clear();
+
+    print_map(default_construct);
+    print_map(range_construct);
+    print_map(range_construct_1);
+    print_map(range_construct_2);
+    print_map(copy_construct);
+
 }
 
 void map_assign_operator() {
@@ -167,12 +194,29 @@ void map_erases() {
     mymap['d'] = 40;
     mymap['e'] = 50;
     mymap['f'] = 60;
+    mymap['g'] = 70;
+    mymap['h'] = 80;
+    mymap['i'] = 90;
+    mymap['j'] = 100;
 
-    it = mymap.find('b');
-    mymap.erase(it);                   // erasing by iterator
-    mymap.erase('c');                  // erasing by key
-    it = mymap.find('e');
-    mymap.erase( it, mymap.end() );    // erasing by range
+    mymap.erase(++mymap.begin());      // erasing by iterator
+    mymap.erase(mymap.begin()->first);                  // erasing by key
+    mymap.erase(--mymap.end());      // erasing by iterator
+    mymap.erase(mymap.begin(), ++(++(++mymap.begin())));    // erasing by range
+    mymap.erase(--(--(--mymap.end())), --mymap.end());    // erasing by range
+
+    print_map(mymap); // print mymap
+    mymap['A'] = 1000;
+    mymap['B'] = 2000;
+    print_map(mymap); // print mymap
+    mymap.erase(--(--(--mymap.end())), mymap.end());    // erasing by range
+    print_map(mymap); // print mymap
+    mymap['C'] = 1000;
+    mymap['D'] = 2000;
+    mymap['E'] = 3000;
+    mymap['F'] = 4000;
+    print_map(mymap); // print mymap
+    mymap.erase(mymap.begin(), mymap.end());    // erasing by range
 
     print_map(mymap); // print mymap
 }
